@@ -15,7 +15,27 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function() {
-    return response()->json([
-        'name' => 'Point Of Sale', 'version' => '1.1.0'
-    ]);
+    return response()->json(['name' => 'Point Of Sale', 'version' => '1.1.0']);
 });
+
+/**
+ * User Authetication Routes.
+ */
+Route::prefix('authentication')->namespace('authentication')->group(function() {
+    Route::post('register', 'AuthController@Register')->middleware(['api.guest']);
+    Route::post('login', 'AuthController@Login')->middleware(['api.guest']);
+    Route::post('refresh', 'AuthController@Refresh')->middleware(['api.user']);
+    Route::post('logout', 'AuthController@Logout')->middleware(['api.user']);
+});
+
+/**
+ * User Account Routes.
+ */
+
+/**
+ * Users Accounts Routes.
+ */
+
+/**
+ * Transactions
+ */

@@ -1,13 +1,14 @@
-<p align="center"><img src="https://res.cloudinary.com/dtfbvvkyp/image/upload/v1566331377/laravel-logolockup-cmyk-red.svg" width="400"></p>
+## Point Of Sale (Web Based Software)
 
-<p align="center">
-<a href="https://travis-ci.org/laravel/framework"><img src="https://travis-ci.org/laravel/framework.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://poser.pugx.org/laravel/framework/d/total.svg" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://poser.pugx.org/laravel/framework/v/stable.svg" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://poser.pugx.org/laravel/framework/license.svg" alt="License"></a>
-</p>
+Point of sales software is an web base point of sale software what allow customer to make
+online order and employee to recieve orders and daily tasks and customer can track their order status.
+##### Application Features
+- **[Authetication](app/http/controllers/api/authentication)**
+- **[Customers](app/http/controllers/api/customers)**
+- **[Employees](app/http/controllers/api/authentication)**
+- **[User](app/http/controllers/api/User)**
 
-## About Laravel
+## Framework Laravel
 
 Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
 

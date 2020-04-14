@@ -1,57 +1,152 @@
-<?php
+<?php /** @noinspection PhpUndefinedMethodInspection */
+
+/** @noinspection PhpIncompatibleReturnTypeInspection */
 
 namespace App\Http\Controllers\Api\Authentication;
 
 use App\User;
+use App\Image;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\User as UserRequest;
+use App\Http\Requests\Login as LoginRequest;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 
 class AuthController extends Controller
 {
     /**
-     * Store a newly created user in storage.
+     * Time taken in seconds before token expire.
      *
-     * @param Request $request
+     * @var integer
+     */
+    protected const TOKEN_EXPIRE = ( 60 * 60 ) * 12;
+
+    /**
+     * Register new user in the application.
+     *
+     * @param UserRequest $validator
      * @return JsonResponse
      */
-    public function store(Request $request): JsonResponse
+    public function register(UserRequest $validator): JsonResponse
     {
-        return response()->json($request);
+        $token = auth()->login(
+            $user = $this->createNewUser($validator->validated())
+        );
+
+        return $this->respondWithToken($token);
     }
 
     /**
-     * Display the specified user.
+     * Attempt to login the user and return a token.
      *
-     * @param User $user
+     * @param LoginRequest $validator
      * @return JsonResponse
      */
-    public function show(User $user): JsonResponse
+    public function login(LoginRequest $validator): JsonResponse
     {
-        return response()->json($user);
+        if(! $token = $this->attemptLogin($validator->validated())) {
+            return response()->json(
+                ['message' => 'Invalid credentials.'], JsonResponse::HTTP_UNAUTHORIZED
+            );
+        }
+
+        return $this->respondWithToken($token);
     }
 
     /**
-     * Update the specified user in storage.
+     * Destroy current user token and get new token.
      *
-     * @param Request $request
-     * @param User $user
      * @return JsonResponse
      */
-    public function update(Request $request, User $user): JsonResponse
+    public function refresh(): JsonResponse
     {
-        return response()->json($user);
+        return $this->respondWithToken(
+            $token = auth()->refresh(true, true)
+        );
     }
 
-
     /**
-     * Remove the specified user from storage.
+     * Get current user account record.
      *
-     * @param User $user
      * @return JsonResponse
      */
-    public function destroy(User $user): JsonResponse
+    public function me(): JsonResponse
     {
-        return response()->json($user);
+        $user = auth()->user();
+
+        $user->image;
+
+        return response()->json(auth()->user());
+    }
+
+    /**
+     * Destroy current user token.
+     *
+     * @return JsonResponse
+     */
+    public function logout(): JsonResponse
+    {
+        auth()->logout();
+
+        return response()->json(['message', 'Have been loggedout successfully.']);
+    }
+
+    /**
+     * Attempt to login the user.
+     *
+     * @param array $credentials
+     * @return string
+     */
+    protected function attemptLogin(array $credentials): string
+    {
+        return auth()->setTTL(self::TOKEN_EXPIRE)->attempt($credentials);
+    }
+
+    /**
+     * Respond with token and time token will expire in.
+     *
+     * @param string $token
+     * @return JsonResponse
+     */
+    protected function respondWithToken(string $token): JsonResponse
+    {
+        return response()->json([
+            'token' => $token,
+            'expire' => self::TOKEN_EXPIRE,
+        ]);
+    }
+
+    /**
+     * Create new user instance.
+     *
+     * @param array $data
+     * @return User
+     */
+    protected function createNewUser(array $data): User
+    {
+        $user = User::create([
+            'email' => $data['email'],
+            'last_name' => $data['last_name'],
+            'first_name' => $data['first_name'],
+            'password' => Hash::make($data['password']),
+        ]);
+
+        $user->image = $this->createUserImage($user);
+
+        return $user;
+    }
+
+    /**
+     * Create user profile picture image.
+     *
+     * @param User $user
+     * @return Image
+     */
+    protected function createUserImage(User $user): Image
+    {
+        return $user->image()->create([
+            'path' => '',
+            'url' => url('assets/default/images/profile-picture.png')
+        ]);
     }
 }

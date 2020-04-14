@@ -65,7 +65,8 @@ class Kernel extends HttpKernel
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
         'cros' => \App\Http\Middleware\Cros::class,
         'auth.jwt' => \Tymon\JWTAuth\Http\Middleware\Authenticate::class,
-        'auth.guest' => \App\Http\Middleware\Guest::class
+        'api.guest' => \App\Http\Middleware\BlockIfAuthenticated::class,
+        'api.user' => \App\Http\Middleware\BlockIfUnauthenticated::class,
     ];
 
     /**
