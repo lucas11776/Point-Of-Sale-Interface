@@ -14,9 +14,20 @@
         <testsuite name="Unit">
             <directory suffix="Test.php">./tests/Unit</directory>
         </testsuite>
-
         <testsuite name="Feature">
             <directory suffix="Test.php">./tests/Feature</directory>
+        </testsuite>
+        <testsuite name="Authentication">
+            <directory suffix="Test.php">./tests/Feature/Authentication</directory>
+        </testsuite>
+        <testsuite name="Customer">
+            <directory suffix="Test.php">./tests/Feature/Customer</directory>
+        </testsuite>
+        <testsuite name="Employee">
+        <directory suffix="Test.php">./tests/Feature/Employee</directory>
+        </testsuite>
+        <testsuite name="User">
+            <directory suffix="Test.php">./tests/Feature/User</directory>
         </testsuite>
     </testsuites>
     <filter>

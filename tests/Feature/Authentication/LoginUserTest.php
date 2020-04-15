@@ -11,7 +11,7 @@ use Tests\TestCase;
 class LoginUserTest extends TestCase
 {
     /**
-     * User factory password.
+     * RegisterRequest factory password.
      */
     protected const USER_PASSWORD = 'password';
 
@@ -23,7 +23,7 @@ class LoginUserTest extends TestCase
         $user = factory(User::class)->create();
 
         $this->login(['email' => $user->email, 'password' => self::USER_PASSWORD,])
-             ->assertStatus(JsonResponse::HTTP_OK);
+            ->assertStatus(JsonResponse::HTTP_OK);
     }
 
     /**
@@ -37,7 +37,7 @@ class LoginUserTest extends TestCase
         );
 
         $this->login($credentials, $token)
-             ->assertUnauthorized();
+            ->assertUnauthorized();
     }
 
     /**
@@ -46,8 +46,8 @@ class LoginUserTest extends TestCase
     public function testLoginWithEmptyCredentials(): void
     {
         $this->login([])
-             ->assertStatus(JsonResponse::HTTP_UNPROCESSABLE_ENTITY)
-             ->assertJsonValidationErrors(['email', 'password']);
+            ->assertStatus(JsonResponse::HTTP_UNPROCESSABLE_ENTITY)
+            ->assertJsonValidationErrors(['email', 'password']);
     }
 
     /**
@@ -56,7 +56,7 @@ class LoginUserTest extends TestCase
     public function testLoginWithEmptyEmail()
     {
         $this->login(['email' => '', 'password' => self::USER_PASSWORD,])
-             ->assertStatus(JsonResponse::HTTP_UNPROCESSABLE_ENTITY);
+            ->assertStatus(JsonResponse::HTTP_UNPROCESSABLE_ENTITY);
     }
 
     /**
@@ -67,8 +67,8 @@ class LoginUserTest extends TestCase
         $user = factory(User::class)->create();
 
         $this->login(['email' => str_replace('@', '', $user->email), 'password' => self::USER_PASSWORD])
-             ->assertStatus(JsonResponse::HTTP_UNPROCESSABLE_ENTITY)
-             ->assertJsonValidationErrors(['email']);
+            ->assertStatus(JsonResponse::HTTP_UNPROCESSABLE_ENTITY)
+            ->assertJsonValidationErrors(['email']);
     }
 
     /**
@@ -79,8 +79,8 @@ class LoginUserTest extends TestCase
         $user = factory(User::class)->create();
 
         $this->login(['email' => $user->email, 'password' => ''])
-             ->assertStatus(JsonResponse::HTTP_UNPROCESSABLE_ENTITY)
-             ->assertJsonValidationErrors(['password']);
+            ->assertStatus(JsonResponse::HTTP_UNPROCESSABLE_ENTITY)
+            ->assertJsonValidationErrors(['password']);
     }
 
     /**
@@ -91,8 +91,8 @@ class LoginUserTest extends TestCase
         $user = factory(User::class)->create();
 
         $this->login(['email' => $user->email, 'password' => 'TEST'])
-             ->assertStatus(JsonResponse::HTTP_UNPROCESSABLE_ENTITY)
-             ->assertJsonValidationErrors(['password']);
+            ->assertStatus(JsonResponse::HTTP_UNPROCESSABLE_ENTITY)
+            ->assertJsonValidationErrors(['password']);
     }
 
     /**
@@ -104,8 +104,8 @@ class LoginUserTest extends TestCase
         $user = factory(User::class)->create();
 
         $this->login(['email' => $user->email, 'password' => $faker->paragraph(50),])
-             ->assertStatus(JsonResponse::HTTP_UNPROCESSABLE_ENTITY)
-             ->assertJsonValidationErrors(['password']);
+            ->assertStatus(JsonResponse::HTTP_UNPROCESSABLE_ENTITY)
+            ->assertJsonValidationErrors(['password']);
     }
 
     /**

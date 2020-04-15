@@ -6,7 +6,7 @@ use App\User;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
-class Login extends FormRequest
+class LoginRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -15,7 +15,7 @@ class Login extends FormRequest
      */
     public function authorize()
     {
-        return true;
+        return auth()->guest();
     }
 
     /**
@@ -26,8 +26,12 @@ class Login extends FormRequest
     public function rules()
     {
         return [
-            'email' => ['required', 'string', 'email', Rule::exists(User::class)],
-            'password'=> ['required', 'string', 'min:8', 'max:20']
+            'email' => [
+                'required', 'string', 'email', Rule::exists(User::class)
+            ],
+            'password'=> [
+                'required', 'string', 'min:8', 'max:20'
+            ]
         ];
     }
 }

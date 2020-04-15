@@ -2,6 +2,7 @@
 
 namespace App;
 
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 use Illuminate\Notifications\Notifiable;
@@ -10,6 +11,13 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 class User extends Authenticatable implements JWTSubject
 {
     use Notifiable;
+
+    /**
+     * RegisterRequest defualt profile picture which is located in public dir.
+     *
+     * @var string
+     */
+    public static $defualtProfileImagePath = 'assets/default/images/profile-picture.png';
 
     /**
      * The attributes that should be hidden for arrays.
@@ -46,6 +54,16 @@ class User extends Authenticatable implements JWTSubject
     public function image(): MorphOne
     {
         return $this->morphOne(Image::class, 'imageable');
+    }
+
+    /**
+     * Get users roles.
+     *
+     * @return BelongsToMany
+     */
+    public function roles(): BelongsToMany
+    {
+        return $this->belongsToMany(Role::class, UsersRoles::class);
     }
 
     /**

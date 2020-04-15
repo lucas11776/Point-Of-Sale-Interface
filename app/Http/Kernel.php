@@ -67,6 +67,8 @@ class Kernel extends HttpKernel
         'auth.jwt' => \Tymon\JWTAuth\Http\Middleware\Authenticate::class,
         'api.guest' => \App\Http\Middleware\BlockIfAuthenticated::class,
         'api.user' => \App\Http\Middleware\BlockIfUnauthenticated::class,
+        'api.administrator' => \App\Http\Middleware\AllowIfAdministrator::class,
+        'api.employee' => \App\Http\Middleware\AllowIfEmployee::class,
     ];
 
     /**

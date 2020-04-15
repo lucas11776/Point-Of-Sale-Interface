@@ -14,12 +14,15 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+/**
+ * Api Home Request.
+ */
 Route::get('/', function() {
     return response()->json(['name' => 'Point Of Sale', 'version' => '1.1.0']);
 });
 
 /**
- * User Authetication Routes.
+ * Authetication Routes.
  */
 Route::prefix('authentication')->namespace('authentication')->group(function() {
     Route::post('register', 'AuthController@Register')->middleware(['api.guest']);
@@ -29,11 +32,22 @@ Route::prefix('authentication')->namespace('authentication')->group(function() {
 });
 
 /**
- * User Account Routes.
+ * Customers Routes
+ */
+Route::prefix('customers')->namespace('customers')->group(function() {
+    Route::post('create', 'CustomerController@Store')->middleware(['api.user', 'api.employee']);
+    Route::patch('update/{customer}', 'CustomerController@Update');
+    Route::delete('delete/{customer}', 'CustomerController@Destroy');
+    Route::get('', 'CustomerController@Index');
+    Route::get('{customer}', 'CustomerController@Index');
+});
+
+/**
+ * RegisterRequest Routes.
  */
 
 /**
- * Users Accounts Routes.
+ * Users Routes.
  */
 
 /**

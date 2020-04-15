@@ -2,11 +2,9 @@
 
 /** @var Factory $factory */
 
-use App\User;
-use App\Image;
+use App\Customer;
 use Faker\Generator as Faker;
 use Illuminate\Database\Eloquent\Factory;
-use Illuminate\Support\Facades\Hash;
 
 /*
 |--------------------------------------------------------------------------
@@ -19,18 +17,11 @@ use Illuminate\Support\Facades\Hash;
 |
 */
 
-$factory->define(User::class, function (Faker $faker) {
+$factory->define(Customer::class, function (Faker $faker) {
     return [
         'first_name' => $faker->firstName,
         'last_name' => $faker->lastName,
         'email' => $faker->unique()->safeEmail,
-        'email_verified_at' => now(),
         'cellphone_number' => $faker->phoneNumber,
-        'password' => Hash::make('password'), // password
     ];
-})->afterCreating(User::class, function(User $user, Faker $faker) {
-    return $user->image()->create([
-        'path' => '',
-        'url' => url(User::$defualtProfileImagePath)
-    ]);
 });

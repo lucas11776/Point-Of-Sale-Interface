@@ -6,9 +6,9 @@ namespace App\Http\Controllers\Api\Authentication;
 
 use App\User;
 use App\Image;
+use App\Http\Requests\LoginRequest;
+use App\Http\Requests\RegisterRequest;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\User as UserRequest;
-use App\Http\Requests\Login as LoginRequest;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Http\JsonResponse;
 
@@ -19,15 +19,15 @@ class AuthController extends Controller
      *
      * @var integer
      */
-    protected const TOKEN_EXPIRE = ( 60 * 60 ) * 12;
+    public const TOKEN_EXPIRE = (60*60) * 12;
 
     /**
      * Register new user in the application.
      *
-     * @param UserRequest $validator
+     * @param RegisterRequest $validator
      * @return JsonResponse
      */
-    public function register(UserRequest $validator): JsonResponse
+    public function register(RegisterRequest $validator): JsonResponse
     {
         $token = auth()->login(
             $user = $this->createNewUser($validator->validated())
@@ -146,7 +146,7 @@ class AuthController extends Controller
     {
         return $user->image()->create([
             'path' => '',
-            'url' => url('assets/default/images/profile-picture.png')
+            'url' => url(User::$defualtProfileImagePath)
         ]);
     }
 }

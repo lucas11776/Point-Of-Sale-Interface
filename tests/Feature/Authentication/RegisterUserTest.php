@@ -15,7 +15,7 @@ class RegisterTest extends TestCase
      */
     public function testRegisterWithVaildData()
     {
-        $this->register($this->formData())->assertOk();
+        $this->register($this->generateUser())->assertOk();
     }
 
     /**
@@ -24,11 +24,11 @@ class RegisterTest extends TestCase
     public function testRegisterWithExistEmailAddress()
     {
         $user = factory(User::class)->create();
-        $data = array_merge($this->formData(), ['email' => $user->email]);
+        $data = array_merge($this->generateUser(), ['email' => $user->email]);
 
         $this->register($data)
-             ->assertStatus(JsonResponse::HTTP_UNPROCESSABLE_ENTITY)
-             ->assertJsonValidationErrors(['email']);
+            ->assertStatus(JsonResponse::HTTP_UNPROCESSABLE_ENTITY)
+            ->assertJsonValidationErrors(['email']);
     }
 
     /**
@@ -37,10 +37,10 @@ class RegisterTest extends TestCase
     public function testRegisterAsAuthenticatedUser()
     {
         $token = auth()->login(factory(User::class)->create());
-        $data = $this->formData();
+        $newUser = $this->generateUser();
 
-        $this->register($data, $token)
-             ->assertUnauthorized();
+        $this->register($newUser, $token)
+            ->assertUnauthorized();
     }
 
     /**
@@ -49,8 +49,8 @@ class RegisterTest extends TestCase
     public function testRegisterWithEmptyData()
     {
         $this->register([])
-             ->assertStatus(JsonResponse::HTTP_UNPROCESSABLE_ENTITY)
-             ->assertJsonValidationErrors(['first_name', 'last_name', 'email', 'password']);
+            ->assertStatus(JsonResponse::HTTP_UNPROCESSABLE_ENTITY)
+            ->assertJsonValidationErrors(['first_name', 'last_name', 'email', 'password']);
     }
 
     /**
@@ -58,9 +58,9 @@ class RegisterTest extends TestCase
      */
     public function testRegisterWithEmptyFirstName()
     {
-        $this->register($this->formData('first_name'))
-             ->assertStatus(JsonResponse::HTTP_UNPROCESSABLE_ENTITY)
-             ->assertJsonValidationErrors(['first_name']);
+        $this->register($this->generateUser('first_name'))
+            ->assertStatus(JsonResponse::HTTP_UNPROCESSABLE_ENTITY)
+            ->assertJsonValidationErrors(['first_name']);
     }
 
     /**
@@ -68,9 +68,9 @@ class RegisterTest extends TestCase
      */
     public function testRegisterWithEmptyLastName()
     {
-        $this->register($this->formData('last_name'))
-             ->assertStatus(JsonResponse::HTTP_UNPROCESSABLE_ENTITY)
-             ->assertJsonValidationErrors(['last_name']);
+        $this->register($this->generateUser('last_name'))
+            ->assertStatus(JsonResponse::HTTP_UNPROCESSABLE_ENTITY)
+            ->assertJsonValidationErrors(['last_name']);
     }
 
     /**
@@ -78,9 +78,9 @@ class RegisterTest extends TestCase
      */
     public function testRegisterWithEmptyEmail()
     {
-        $this->register($this->formData('email'))
-             ->assertStatus(JsonResponse::HTTP_UNPROCESSABLE_ENTITY)
-             ->assertJsonValidationErrors('email');
+        $this->register($this->generateUser('email'))
+            ->assertStatus(JsonResponse::HTTP_UNPROCESSABLE_ENTITY)
+            ->assertJsonValidationErrors('email');
     }
 
     /**
@@ -88,11 +88,11 @@ class RegisterTest extends TestCase
      */
     public function testRegisterWithInvalidEmail()
     {
-        $data = $this->formData();
-        $data['email'] = str_replace('@', '', $data['email']);
+        $newUser = $this->generateUser();
+        $newUser['email'] = str_replace('@', '', $newUser['email']);
 
-        $this->register($data)->assertStatus(JsonResponse::HTTP_UNPROCESSABLE_ENTITY)
-             ->assertJsonValidationErrors('email');
+        $this->register($newUser)->assertStatus(JsonResponse::HTTP_UNPROCESSABLE_ENTITY)
+            ->assertJsonValidationErrors('email');
     }
 
     /**
@@ -100,9 +100,9 @@ class RegisterTest extends TestCase
      */
     public function testRegiterWithEmptyPassword()
     {
-        $this->register($this->formData('password'))
-             ->assertStatus(JsonResponse::HTTP_UNPROCESSABLE_ENTITY)
-             ->assertJsonValidationErrors('password');
+        $this->register($this->generateUser('password'))
+            ->assertStatus(JsonResponse::HTTP_UNPROCESSABLE_ENTITY)
+            ->assertJsonValidationErrors('password');
     }
 
     /**
@@ -110,9 +110,9 @@ class RegisterTest extends TestCase
      */
     public function testRegisterWithEmptyPasswordConfirmation()
     {
-        $this->register($this->formData($key = 'password_confirmation'))
-             ->assertStatus(JsonResponse::HTTP_UNPROCESSABLE_ENTITY)
-             ->assertJsonValidationErrors('password');
+        $this->register($this->generateUser($key = 'password_confirmation'))
+            ->assertStatus(JsonResponse::HTTP_UNPROCESSABLE_ENTITY)
+            ->assertJsonValidationErrors('password');
     }
 
     /**
@@ -120,22 +120,23 @@ class RegisterTest extends TestCase
      */
     public function testRegisterWithIncorrectPasswordConfirmation()
     {
-        $data = $this->formData();
+        $newUser = $this->generateUser();
 
-        $data['password_confirmation'] = $data['password_confirmation'] . '&^';
+        $newUser['password_confirmation'] = $newUser['password_confirmation'] . '&^';
 
-        $this->register($data)->assertStatus(JsonResponse::HTTP_UNPROCESSABLE_ENTITY);
+        $this->register($newUser)
+            ->assertStatus(JsonResponse::HTTP_UNPROCESSABLE_ENTITY);
     }
 
     /**
      * Generate new register form data using faker.
      *
-     * @param string|null $remove
+     * @param string|null $removeKey
      * @return array
      */
-    protected function formData(string $remove = null): array
+    protected function generateUser(string $removeKey = null): array
     {
-        $form = [
+        $newUser = [
             'first_name' =>  ($faker = Faker::create())->firstName,
             'last_name' => $faker->lastName,
             'email' => $faker->unique()->email,
@@ -143,19 +144,19 @@ class RegisterTest extends TestCase
             'password_confirmation' => $password
         ];
 
-        return is_null($remove) ? $form : array_merge($form, [strtolower($remove) => '']);
+        return is_null($removeKey) ? $newUser : array_merge($newUser, [strtolower($removeKey) => '']);
     }
 
     /**
      * Makes register request to application.
      *
-     * @param array $data
+     * @param array $newUser
      * @param string $token
      * @return TestResponse
      */
-    protected function register(array $data, string $token = ''): TestResponse
+    protected function register(array $newUser, string $token = ''): TestResponse
     {
         return $this->withHeader('Authorization', $token)
-            ->json('POST', 'api/authentication/register', $data);
+            ->json('POST', 'api/authentication/register', $newUser);
     }
 }
