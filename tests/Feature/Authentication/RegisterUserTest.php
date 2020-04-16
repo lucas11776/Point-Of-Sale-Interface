@@ -15,7 +15,22 @@ class RegisterTest extends TestCase
      */
     public function testRegisterWithVaildData()
     {
-        $this->register($this->generateUser())->assertOk();
+        $this->register($this->generateUser())
+            ->assertOk();
+    }
+
+    /**
+     * Try to register and try to login with the registered user
+     */
+    public function testRegisterAndLoginWithRegisteredUser()
+    {
+        $this->register($data = $this->generateUser())
+            ->assertOk();
+
+        auth()->logout();
+
+        $this->login($data)
+            ->assertOk();
     }
 
     /**
@@ -158,5 +173,18 @@ class RegisterTest extends TestCase
     {
         return $this->withHeader('Authorization', $token)
             ->json('POST', 'api/authentication/register', $newUser);
+    }
+
+    /**
+     * Makes login request to application.
+     *
+     * @param array $credentials
+     * @param string $token
+     * @return TestResponse
+     */
+    protected function login(array $credentials, string $token = ''): TestResponse
+    {
+        return $this->withHeader('Authorization', $token)
+            ->json('POST', 'api/authentication/login', $credentials);
     }
 }

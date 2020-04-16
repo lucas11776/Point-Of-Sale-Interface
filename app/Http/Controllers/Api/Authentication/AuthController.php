@@ -44,6 +44,7 @@ class AuthController extends Controller
      */
     public function login(LoginRequest $validator): JsonResponse
     {
+
         if(! $token = $this->attemptLogin($validator->validated())) {
             return response()->json(
                 ['message' => 'Invalid credentials.'], JsonResponse::HTTP_UNAUTHORIZED
