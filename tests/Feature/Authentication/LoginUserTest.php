@@ -20,9 +20,12 @@ class LoginUserTest extends TestCase
      */
     public function testLoginWithValidCredentials()
     {
-        $user = factory(User::class)->create();
+        $credentials = [
+            'email' => ($user = factory(User::class)->create())->email,
+            'password' => self::USER_PASSWORD
+        ];
 
-        $this->login(['email' => $user->email, 'password' => self::USER_PASSWORD,])
+        $this->login($credentials)
             ->assertStatus(JsonResponse::HTTP_OK);
     }
 
@@ -31,10 +34,11 @@ class LoginUserTest extends TestCase
      */
     public function testLoginAsAuthenticatedUser()
     {
-        $user = factory(User::class)->create();
-        $token = auth()->attempt(
-            $credentials = ['email' => $user->email, 'password' => self::USER_PASSWORD]
-        );
+        $credentials = [
+            'email' => ($user = factory(User::class)->create())->email,
+            'password' => self::USER_PASSWORD
+        ];
+        $token = auth()->attempt($credentials);
 
         $this->login($credentials, $token)
             ->assertUnauthorized();

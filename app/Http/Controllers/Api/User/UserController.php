@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\User;
 
+use App\Http\Requests\UpdateUserRequest;
 use App\User;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
@@ -34,13 +35,14 @@ class UserController extends Controller
     /**
      * Update the specified user in storage.
      *
-     * @param Request $request
-     * @param AuthController $user
+     * @param UpdateUserRequest $validator
      * @return JsonResponse
      */
-    public function update(Request $request, AuthController $user): JsonResponse
+    public function update(UpdateUserRequest $validator): JsonResponse
     {
-        return response()->json($user);
+        auth()->user()->update($validator->validated());
+
+        return response()->json(['message' => 'User account has been updated.']);
     }
 
 

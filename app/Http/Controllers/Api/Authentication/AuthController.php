@@ -72,11 +72,7 @@ class AuthController extends Controller
      */
     public function me(): JsonResponse
     {
-        $user = auth()->user();
-
-        $user->image;
-
-        return response()->json(auth()->user());
+        return response()->json(! ($user = auth()->user()) ?: $user->image);
     }
 
     /**

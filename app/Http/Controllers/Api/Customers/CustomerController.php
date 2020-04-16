@@ -1,17 +1,17 @@
-<?php
+<?php /** @noinspection ALL */
 
 namespace App\Http\Controllers\api\Customers;
 
 use App\Customer;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\CustomerRequest as CustomerReqest;
+use App\Http\Requests\CustomerRequest;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Http\JsonResponse;
 
 class CustomerController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Display a listing of customers.
      *
      * @return LengthAwarePaginator
      */
@@ -21,12 +21,12 @@ class CustomerController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Store a newly created customer in storage.
      *
-     * @param CustomerReqest $validator
+     * @param CustomerRequest $validator
      * @return JsonResponse
      */
-    public function store(CustomerReqest $validator): JsonResponse
+    public function store(CustomerRequest $validator): JsonResponse
     {
         Customer::create($validator->validated());
 
@@ -34,7 +34,7 @@ class CustomerController extends Controller
     }
 
     /**
-     * Display the specified resource.
+     * Display the specified customer.
      *
      * @param Customer $customer
      * @return JsonResponse
@@ -45,15 +45,15 @@ class CustomerController extends Controller
     }
 
     /**
-     * Update the specified resource in storage.
+     * Update the specified customer in storage.
      *
-     * @param Request $request
-     * @param int $id
+     * @param Customer $customer
+     * @param CustomerRequest $validate
      * @return JsonResponse
      */
-    public function update(Request $request, $id): JsonResponse
+    public function update(Customer $customer, CustomerRequest $validate): JsonResponse
     {
-        return response()->json([]);
+        return response()->json();
     }
 
     /**
@@ -62,7 +62,7 @@ class CustomerController extends Controller
      * @param int $id
      * @return JsonResponse
      */
-    public function destroy($id): JsonResponse
+    public function destroy(Customer $customer): JsonResponse
     {
         return response()->json([]);
     }

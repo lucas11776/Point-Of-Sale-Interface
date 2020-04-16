@@ -17,9 +17,7 @@ use Illuminate\Support\Facades\Route;
 /**
  * Api Home Request.
  */
-Route::get('/', function() {
-    return response()->json(['name' => 'Point Of Sale', 'version' => '1.1.0']);
-});
+Route::get('/', ['name' => 'Point Of Sale (Web base Software).', 'version' => '1.1.0']);
 
 /**
  * Authetication Routes.
@@ -27,12 +25,13 @@ Route::get('/', function() {
 Route::prefix('authentication')->namespace('authentication')->group(function() {
     Route::post('register', 'AuthController@Register')->middleware(['api.guest']);
     Route::post('login', 'AuthController@Login')->middleware(['api.guest']);
+    Route::post('me', 'AuthController@Me')->middleware(['api.user']);
     Route::post('refresh', 'AuthController@Refresh')->middleware(['api.user']);
     Route::post('logout', 'AuthController@Logout')->middleware(['api.user']);
 });
 
 /**
- * Customers Routes
+ * Customers Routes.
  */
 Route::prefix('customers')->namespace('customers')->group(function() {
     Route::post('create', 'CustomerController@Store')->middleware(['api.user', 'api.employee']);
@@ -43,12 +42,12 @@ Route::prefix('customers')->namespace('customers')->group(function() {
 });
 
 /**
- * RegisterRequest Routes.
- */
-
-/**
  * Users Routes.
  */
+Route::prefix('user')->namespace('user')->group(function() {
+    Route::patch('update', 'UserController@Update')->middleware(['api.user']);
+    Route::patch('upload', 'ProfilePictureController@Upload')->middleware(['api.user']);
+});
 
 /**
  * Transactions
