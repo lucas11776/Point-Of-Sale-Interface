@@ -11,17 +11,6 @@ use Illuminate\Http\Request;
 class UserController extends Controller
 {
     /**
-     * Store a newly created user in storage.
-     *
-     * @param Request $request
-     * @return JsonResponse
-     */
-    public function store(Request $request): JsonResponse
-    {
-        return response()->json($request);
-    }
-
-    /**
      * Display the specified user.
      *
      * @param AuthController $user
@@ -44,7 +33,6 @@ class UserController extends Controller
 
         return response()->json(['message' => 'User account has been updated.']);
     }
-
 
     /**
      * Remove the specified user from storage.

@@ -15,7 +15,7 @@ class UpdateUserTest extends TestCase
      */
     public function testUpdateUserFirstName()
     {
-        $token = auth()->login($user = factory(User::class)->create());
+        $token = auth()->login($user = User::first());
         $data = array_merge($user->toArray(), ['first_name' => Faker::create()->firstName]);
 
         $this->updateUser($data, $token)
@@ -27,7 +27,7 @@ class UpdateUserTest extends TestCase
      */
     public function testUpdateUserWithEmptyFirstName()
     {
-        $token = auth()->login($user = factory(User::class)->create());
+        $token = auth()->login($user = User::first());
         $data = array_merge($user->toArray(), ['first_name' => '']);
 
         $this->updateUser($data, $token)
@@ -40,7 +40,7 @@ class UpdateUserTest extends TestCase
      */
     public function testUpdateUserAccountLastName()
     {
-        $token = auth()->login($user = factory(User::class)->create());
+        $token = auth()->login($user = User::first());
         $data = array_merge($user->toArray(), ['last_name' => Faker::create()->lastName]);
 
         $this->updateUser($data, $token)
@@ -52,7 +52,7 @@ class UpdateUserTest extends TestCase
      */
     public function testUpdateUserAccountWithEmptyLastName()
     {
-        $token = auth()->login($user = factory(User::class)->create());
+        $token = auth()->login($user = User::first());
         $data = array_merge($user->toArray(), ['last_name' => '']);
 
         $this->updateUser($data, $token)
@@ -65,7 +65,7 @@ class UpdateUserTest extends TestCase
      */
     public function testUpdateUserAccountPhoneNumber()
     {
-        $token = auth()->login($user = factory(User::class)->create());
+        $token = auth()->login($user = User::first());
         $data = array_merge($user->toArray(), ['cellphone_number' => Faker::create()->e164PhoneNumber]);
 
         $this->updateUser($data, $token)
@@ -77,7 +77,7 @@ class UpdateUserTest extends TestCase
      */
     public function testUpdateUserAccountWithEmptyPhoneNumber()
     {
-        $token = auth()->login($user = factory(User::class)->create());
+        $token = auth()->login($user = User::first());
         $data = array_merge($user->toArray(), ['cellphone_number' => '']);
 
         $this->updateUser($data, $token)
@@ -89,7 +89,7 @@ class UpdateUserTest extends TestCase
      */
     public function testUpdateUserAccountWithShortPhoneNumber()
     {
-        $token = auth()->login($user = factory(User::class)->create());
+        $token = auth()->login($user = User::first());
         $data = array_merge($user->toArray(), ['cellphone_number' => '07219']);
 
         $this->updateUser($data, $token)
@@ -102,7 +102,7 @@ class UpdateUserTest extends TestCase
      */
     public function testUpdateUserAccountWithLongPhoneNumber()
     {
-        $token = auth()->login($user = factory(User::class)->create());
+        $token = auth()->login($user = User::first());
         $data = array_merge($user->toArray(), ['cellphone_number' => '07219743824623862359234923753278']);
 
         $this->updateUser($data, $token)

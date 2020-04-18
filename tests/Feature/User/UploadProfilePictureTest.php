@@ -18,11 +18,12 @@ class UploadProfilePictureTest extends TestCase
     {
         Storage::fake('public');
 
-        $token = auth()->login($user = factory(User::class)->create());
+        $token = auth()->login($user = User::first());
         $file = UploadedFile::fake()->image('test_image.png')->size(1.5*1000);
         $data = ['image' => $file];
 
-        $this->upload($data, $token)->assertOk();
+        $this->upload($data, $token)
+            ->assertOk();
 
         Storage::disk('public')->assertMissing($file->hashName());
 
@@ -39,7 +40,7 @@ class UploadProfilePictureTest extends TestCase
     {
         Storage::fake('public');
 
-        $token = auth()->login($user = factory(User::class)->create());
+        $token = auth()->login($user = User::first());
         $data = ['image' => $file = UploadedFile::fake()->image('document.pdf')->size(1.5*1000)];
 
         $this->upload($data, $token)
@@ -54,7 +55,7 @@ class UploadProfilePictureTest extends TestCase
     {
         Storage::fake('public');
 
-        $token = auth()->login($user = factory(User::class)->create());
+        $token = auth()->login($user = User::first());
         $data = ['image' => $file = UploadedFile::fake()->image('test_image.png')->size(3*1000)];
 
         $this->upload($data, $token)
@@ -69,7 +70,7 @@ class UploadProfilePictureTest extends TestCase
     {
         Storage::fake('public');
 
-        $token = auth()->login($user = factory(User::class)->create());
+        $token = auth()->login($user = User::first());
         $data = ['image' => ''];
 
         $this->upload($data, $token)
@@ -86,7 +87,7 @@ class UploadProfilePictureTest extends TestCase
      */
     public function upload(array $data, string $token = ''): TestResponse
     {
-        return $this->withHeader('Authorization', '')
+        return $this->withHeader('Authorization', $token)
             ->json('PATCH', 'api/user/upload', $data);
     }
 }

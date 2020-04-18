@@ -17,12 +17,22 @@ class BlockIfUnauthenticated
      */
     public function handle($request, Closure $next)
     {
-        if(auth()->guest()) {
+        if (! $this->isLoggedIn()) {
             return response()->json(
                 ['messge' => 'Unauthorized Access.'], JsonResponse::HTTP_UNAUTHORIZED
             );
         }
 
         return $next($request);
+    }
+
+    /**
+     * Check if user is not logged in.
+     *
+     * @return bool
+     */
+    protected function isLoggedIn(): bool
+    {
+        return ! auth()->guest();
     }
 }

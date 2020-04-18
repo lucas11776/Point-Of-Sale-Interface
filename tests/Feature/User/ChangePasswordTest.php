@@ -15,7 +15,7 @@ class ChangePasswordTest extends TestCase
      */
     public function testChangeUserPassword()
     {
-        $token = auth()->login($user = factory(User::class)->create());
+        $token = auth()->login($user = $this->getUser());
         $data = [
             'old_password' => 'password',
             'password' => $newPassword = Faker::create()->password(8,20),
@@ -34,7 +34,7 @@ class ChangePasswordTest extends TestCase
      */
     public function testChangePasswordAndLoginWithNewPassword()
     {
-        $token = auth()->login($user = factory(User::class)->create());
+        $token = auth()->login($user = $this->getUser());
         $data = [
             'old_password' => 'password',
             'password' => $newPassword = Faker::create()->password(8,20),
@@ -57,7 +57,7 @@ class ChangePasswordTest extends TestCase
      */
     public function testChangePasswordAndLoginWithOldPassword()
     {
-        $token = auth()->login($user = factory(User::class)->create());
+        $token = auth()->login($user = $this->getUser());
         $data = [
             'old_password' => 'password',
             'password' => $newPassword = Faker::create()->password(8,20),
@@ -91,7 +91,7 @@ class ChangePasswordTest extends TestCase
      */
     public function testChangePasswordWithInvalidOldPassword()
     {
-        $token = auth()->login($user = factory(User::class)->create());
+        $token = auth()->login($user = User::first());
         $data = [
             'old_password' => ($faker = Faker::create())->password(8,20),
             'new_password' => $newPassword = $faker->password(8,20),
@@ -108,7 +108,7 @@ class ChangePasswordTest extends TestCase
      */
     public function testChangePasswordWithShortOldPassword()
     {
-        $token = auth()->login($user = factory(User::class)->create());
+        $token = auth()->login($user = User::first());
         $data = [
             'old_password' => ($faker = Faker::create())->password(4,7),
             'new_password' => $newPassword = $faker->password(8,20),
@@ -125,7 +125,7 @@ class ChangePasswordTest extends TestCase
      */
     public function testChangePasswordWithLongOldPassword()
     {
-        $token = auth()->login($user = factory(User::class)->create());
+        $token = auth()->login($user = User::first());
         $data = [
             'old_password' => ($faker = Faker::create())->password(21,30),
             'new_password' => $newPassword = $faker->password(8,20),
@@ -142,7 +142,7 @@ class ChangePasswordTest extends TestCase
      */
     public function testChangePasswordWithShortNewPassword()
     {
-        $token = auth()->login($user = factory(User::class)->create());
+        $token = auth()->login($user = User::first());
         $data = [
             'old_password' => 'password',
             'new_password' => $newPassword = Faker::create()->password(4,7),
@@ -159,7 +159,7 @@ class ChangePasswordTest extends TestCase
      */
     public function testChangePasswordWithShortLongPassword()
     {
-        $token = auth()->login($user = factory(User::class)->create());
+        $token = auth()->login($user = User::first());
         $data = [
             'old_password' => 'password',
             'new_password' => $newPassword = Faker::create()->password(21,35),
@@ -176,7 +176,7 @@ class ChangePasswordTest extends TestCase
      */
     public function testChangePasswordWithInvalidPasswordConfirmation()
     {
-        $token = auth()->login($user = factory(User::class)->create());
+        $token = auth()->login($user = User::first());
         $data = [
             'old_password' => 'password',
             'new_password' => ($faker = Faker::create())->password(8,20),
@@ -189,7 +189,7 @@ class ChangePasswordTest extends TestCase
     }
 
     /**
-     * Make request to change user password.
+     * Make request to change user password to application.
      *
      * @param array $data
      * @param string $token

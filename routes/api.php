@@ -48,6 +48,7 @@ Route::prefix('user')->namespace('user')->group(function() {
     Route::patch('update', 'UserController@Update')->middleware(['api.user']);
     Route::patch('upload', 'ProfilePictureController@Upload')->middleware(['api.user']);
     Route::patch('change/password', 'ChangePasswordController@Change')->middleware(['api.user']);
+    Route::post('{user}/add/role', 'RoleController@Add')->middleware(['api.administrator']);
 });
 
 /**

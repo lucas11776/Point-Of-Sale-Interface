@@ -1,8 +1,10 @@
-<?php
+<?php /** @noinspection ALL */
 
 namespace App;
 
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 use Illuminate\Notifications\Notifiable;
@@ -64,6 +66,17 @@ class User extends Authenticatable implements JWTSubject
     public function roles(): BelongsToMany
     {
         return $this->belongsToMany(Role::class, UsersRoles::class);
+    }
+
+    /**
+     * Add new user role.
+     *
+     * @param Role $role
+     * @return Model
+     */
+    public function addRole(Role $role): Model
+    {
+        return $this->hasOne(UsersRoles::class)->create(['role_id' => $role->id]);
     }
 
     /**

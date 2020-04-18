@@ -6,7 +6,7 @@ use Closure;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
-class BlockIfAuthenticated
+class BlockIfAuthenticated extends BlockIfUnauthenticated
 {
     /**
      * Handle an incoming request.
@@ -24,5 +24,15 @@ class BlockIfAuthenticated
         }
 
         return $next($request);
+    }
+
+    /**
+     * Check if user is not logged in.
+     *
+     * @return bool
+     */
+    public function isNotLoggedIn(): bool
+    {
+        return ! $this->isNotLoggedIn();
     }
 }

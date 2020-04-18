@@ -6,7 +6,7 @@ use Closure;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
-class AllowIfEmployee
+class AllowIfEmployee extends AllowIfAdministrator
 {
     /**
      * Handle an incoming request.
@@ -17,16 +17,22 @@ class AllowIfEmployee
      */
     public function handle($request, Closure $next)
     {
-        $employeeOrAdministrotor = auth()->user()->roles()
-            ->where(['name' => 'administrator'])
-            ->orWhere(['name' => 'employee'])->first();
-
-        if(! $employeeOrAdministrotor) {
+        if(! $this->isEmployee()) {
             return response()->json(
                 ['Unauthorized Access.'], JsonResponse::HTTP_UNAUTHORIZED
             );
         }
 
         return $next($request);
+    }
+
+    /**
+     * Check if user is employee or administrator.
+     *
+     * @return bool
+     */
+    protected function isEmployee(): bool
+    {
+        return $this->isAdministrator() OR auth()->user()->roles('name', 'employee')->first();
     }
 }
