@@ -54,36 +54,6 @@ class UpdateCustomerTest extends TestCase
     }
 
     /**
-     * Try to update customer with short cellphone number phone number.
-     */
-    public function testUpdateCustomerWithShortPhoneNumber()
-    {
-        auth()->login($this->getEmployee());
-
-        $customer = $this->getCustomer();
-        $data = array_merge($customer->toArray(), ['cellphone_number' => '072 78']);
-
-        $this->updateCustomer($customer->id, $data)
-            ->assertStatus(JsonResponse::HTTP_UNPROCESSABLE_ENTITY)
-            ->assertJsonValidationErrors(['cellphone_number']);
-    }
-
-    /**
-     * Try to update customer with short cellphone number phone number.
-     */
-    public function testUpdateCustomerWithLongPhoneNumber()
-    {
-        auth()->login($this->getEmployee());
-
-        $customer = $this->getCustomer();
-        $data = array_merge($customer->toArray(), ['cellphone_number' => '0727874859403758393564785']);
-
-        $this->updateCustomer($customer->id, $data)
-            ->assertStatus(JsonResponse::HTTP_UNPROCESSABLE_ENTITY)
-            ->assertJsonValidationErrors(['cellphone_number']);
-    }
-
-    /**
      * Make update customer request to  application.
      *
      * @param int $customerId

@@ -17,15 +17,18 @@ class UploadProfilePictureTest extends TestCase
     public function testUploadProfilePicture()
     {
         Storage::fake('public');
-        $token = auth()->login($user = $this->getUser());
+        auth()->login($user = $this->getUser());
+
         $data = [
             'image' => $file = UploadedFile::fake()->image('test_image.png')->size(1.5*1000)
         ];
 
         $this->upload($data)
             ->assertOk();
+
         Storage::disk('public')
             ->assertMissing($file->hashName());
+
         $this->assertTrue(
             'public/' . $file->hashName() == $user->image->path,
             'User profile picture has been uploaded but user image path has not changed.'
@@ -79,7 +82,6 @@ class UploadProfilePictureTest extends TestCase
      * Make profile picture upload request to application.
      *
      * @param array $data
-     * @param string $token
      * @return TestResponse
      */
     public function upload(array $data): TestResponse

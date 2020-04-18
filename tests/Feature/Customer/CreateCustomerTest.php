@@ -74,38 +74,6 @@ class CreateCustomerTest extends TestCase
     }
 
     /**
-     * Try to create customer with short phone number.
-     */
-    public function testCreateCustomerWithShortPhoneNumberAsEmployee()
-    {
-        auth()->login($this->getEmployee());
-
-        $customer = $this->generateCustomer();
-
-        $customer['cellphone_number'] = '072 95';
-
-        $this->createCustomer($customer)
-            ->assertStatus(JsonResponse::HTTP_UNPROCESSABLE_ENTITY)
-            ->assertJsonValidationErrors(['cellphone_number']);
-    }
-
-    /**
-     * Try to create customer with long phone number.
-     */
-    public function testCreateCustomerWithLongPhoneNumberAsEmployee()
-    {
-        auth()->login($this->getEmployee());
-
-        $customer = $this->generateCustomer();
-
-        $customer['cellphone_number'] = $customer['cellphone_number'] . $customer['cellphone_number'];
-
-        $this->createCustomer($customer)
-            ->assertStatus(JsonResponse::HTTP_UNPROCESSABLE_ENTITY)
-            ->assertJsonValidationErrors(['cellphone_number']);
-    }
-
-    /**
      * Get customer for data generated using faker.
      *
      * @return array

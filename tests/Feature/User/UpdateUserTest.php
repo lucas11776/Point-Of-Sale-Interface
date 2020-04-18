@@ -39,34 +39,6 @@ class UpdateUserTest extends TestCase
     }
 
     /**
-     * Try to update user account with short phone number phone number.
-     */
-    public function testUpdateUserAccountWithShortPhoneNumber()
-    {
-        auth()->login($user = $this->getUser());
-
-        $data = array_merge($user->toArray(), ['cellphone_number' => '07219']);
-
-        $this->updateUser($data, '')
-            ->assertStatus(JsonResponse::HTTP_UNPROCESSABLE_ENTITY)
-            ->assertJsonValidationErrors(['cellphone_number']);
-    }
-
-    /**
-     * Try to update user account with short phone number phone number.
-     */
-    public function testUpdateUserAccountWithLongPhoneNumber()
-    {
-        auth()->login($user = User::first());
-
-        $data = array_merge($user->toArray(), ['cellphone_number' => '07219743824623862359234923753278']);
-
-        $this->updateUser($data)
-            ->assertStatus(JsonResponse::HTTP_UNPROCESSABLE_ENTITY)
-            ->assertJsonValidationErrors(['cellphone_number']);
-    }
-
-    /**
      * Update user account.
      *
      * @param array $data

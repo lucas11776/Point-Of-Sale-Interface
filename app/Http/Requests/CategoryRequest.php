@@ -1,12 +1,11 @@
-<?php
+<?php /** @noinspection ALL */
 
 namespace App\Http\Requests;
 
-use App\User;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
-class LoginRequest extends FormRequest
+class CategoryRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -26,11 +25,8 @@ class LoginRequest extends FormRequest
     public function rules()
     {
         return [
-            'email' => [
-                'required', 'string', 'email', Rule::exists(User::class)
-            ],
-            'password'=> [
-                'required', 'string', 'min:8', 'max:20'
+            'name' => [
+                'required', 'string', 'min:3', 'max:50', Rule::unique('categories')->ignore($this->category)
             ]
         ];
     }

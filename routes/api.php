@@ -35,7 +35,7 @@ Route::prefix('authentication')->namespace('authentication')->group(function() {
  */
 Route::prefix('customers')->namespace('customers')->group(function() {
     Route::get('', 'CustomerController@Index');
-    Route::post('create', 'CustomerController@Store')->middleware(['api.user', 'api.employee']);
+    Route::post('create', 'CustomerController@Store')->middleware(['api.employee']);
     Route::patch('{customer}/update', 'CustomerController@Update');
     Route::delete('{customer}/delete', 'CustomerController@Destroy');
     Route::get('{customer}', 'CustomerController@Index');
@@ -49,6 +49,13 @@ Route::prefix('user')->namespace('user')->group(function() {
     Route::patch('upload', 'ProfilePictureController@Upload')->middleware(['api.user']);
     Route::patch('change/password', 'ChangePasswordController@Change')->middleware(['api.user']);
     Route::post('{user}/add/role', 'RoleController@Add')->middleware(['api.administrator']);
+});
+
+/**
+ * Products Route
+ */
+Route::prefix('products')->namespace('products')->group(function() {
+    Route::post('categories/create', 'CategoryController@Store')->middleware(['api.administrator']);
 });
 
 /**
