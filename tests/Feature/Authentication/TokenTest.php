@@ -2,10 +2,8 @@
 
 namespace Tests\Feature;
 
-use App\User;
-use Illuminate\Foundation\Testing\TestResponse;
-use Faker\Factory;
 use Tests\TestCase;
+use Illuminate\Foundation\Testing\TestResponse;
 
 class TokenTest extends TestCase
 {
@@ -14,7 +12,10 @@ class TokenTest extends TestCase
     */
    public function testRefreshTokenAsAuthenticated()
    {
-       $this->refreshToken($this->getToken())->assertOk();
+       $token = auth()->login($this->getUser());
+
+       $this->refreshToken($token)
+           ->assertOk();
    }
 
    /**
@@ -22,15 +23,8 @@ class TokenTest extends TestCase
     */
    public function testRefreshTokenAsUnauthenticated()
    {
-        $this->refreshToken()->assertUnauthorized();
-   }
-
-    /**
-     * @return string
-     */
-   protected function getToken(): string
-   {
-        return auth()->login(factory(User::class)->create());
+        $this->refreshToken()
+            ->assertUnauthorized();
    }
 
     /**

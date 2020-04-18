@@ -12,28 +12,12 @@ use Tests\TestCase;
 class CreateCustomerTest extends TestCase
 {
     /**
-     * Try to create customer with valid data as administrator.
+     * Try to create customer with valid data.
      */
-    public function testCreateCustomerWithValidDataAsAdministrator()
+    public function testCreateCustomerWithValidData()
     {
-        $user = factory(User::class)->create();
-
-        $user->roles()->create(['name' => 'administrator']);
-
-        $this->createCustomer($this->generateCustomer(), auth()->login($user))
-            ->assertOk();
-    }
-
-    /**
-     * Try to create customer with valid data as employee.
-     */
-    public function testCreateCustomerWithValidDataAsEmployee()
-    {
-        $user = factory(User::class)->create();
-
-        $user->roles()->create(['name' => 'employee']);
-
-        $this->createCustomer($this->generateCustomer(), auth()->login($user))
+        auth()->login($this->getAdministrator());
+        $this->createCustomer($this->generateCustomer())
             ->assertOk();
     }
 
@@ -42,84 +26,34 @@ class CreateCustomerTest extends TestCase
      */
     public function testCreateCustomerWithValidDataAsUser()
     {
-        $user = factory(User::class)->create();
-
-        $this->createCustomer($this->generateCustomer(), auth()->login($user))
+        auth()->login($this->getUser());
+        $this->createCustomer($this->generateCustomer())
             ->assertUnauthorized();
     }
 
     /**
      * Try to create customer with empty data.
      */
-    public function testCreateCustomerWithEmptyDataAsEmployee()
+    public function testCreateCustomerWithEmptyData()
     {
-        $user = factory(User::class)->create();
-
-        $user->roles()->create(['name' => 'employee']);
-
-        $this->createCustomer([], auth()->login($user))
+        auth()->login($this->getEmployee());
+        $this->createCustomer([])
             ->assertStatus(JsonResponse::HTTP_UNPROCESSABLE_ENTITY)
             ->assertJsonValidationErrors(['first_name', 'last_name', 'email', 'cellphone_number']);
     }
 
     /**
-     * Try to create customer with empty first name.
-     */
-    public function testCreateCustomerWithEmptyFirstNameAsEmployee()
-    {
-        $user = factory(User::class)->create();
-        $newCustomer = array_merge($this->generateCustomer(), ['first_name' => '']);
-
-        $user->roles()->create(['name' => 'employee']);
-
-        $this->createCustomer($newCustomer, auth()->login($user))
-            ->assertStatus(JsonResponse::HTTP_UNPROCESSABLE_ENTITY)
-            ->assertJsonValidationErrors(['first_name']);
-    }
-
-    /**
-     * Try to create customer with empty lastname.
-     */
-    public function testCreateCustomerWithEmptyLastnameAsEmployee()
-    {
-        $user = factory(User::class)->create();
-        $newCustomer = array_merge($this->generateCustomer(), ['last_name' => '']);
-
-        $user->roles()->create(['name' => 'employee']);
-
-        $this->createCustomer($newCustomer, auth()->login($user))
-            ->assertStatus(JsonResponse::HTTP_UNPROCESSABLE_ENTITY)
-            ->assertJsonValidationErrors(['last_name']);
-    }
-
-    /**
-     * Try to create customer with empty email address.
-     */
-    public function testCreateCustomerWithEmptyEmailAddressAsEmployee()
-    {
-        $createdUser = factory(User::class)->create();
-        $generatedCustomer = array_merge($this->generateCustomer(), ['email' => '']);
-
-        $createdUser->roles()->create(['name' => 'employee']);
-
-        $this->createCustomer($generatedCustomer, auth()->login($createdUser))
-            ->assertStatus(JsonResponse::HTTP_UNPROCESSABLE_ENTITY)
-            ->assertJsonValidationErrors(['email']);
-    }
-
-    /**
      * Try to create customer with invalid email address.
      */
-    public function testCreateCustomerWithInvalidEmailAsEmployee()
+    public function testCreateCustomerWithInvalidEmail()
     {
-        $user = factory(User::class)->create();
-        $newCustomer = $this->generateCustomer();
+        auth()->login($this->getEmployee());
 
-        $newCustomer['email'] = str_replace('@', '', $newCustomer['email']);
+        $customer = $this->generateCustomer();
 
-        $user->roles()->create(['name' => 'employee']);
+        $customer['email'] = str_replace('@', '', $customer['email']);
 
-        $this->createCustomer($newCustomer, auth()->login($user))
+        $this->createCustomer($customer)
             ->assertStatus(JsonResponse::HTTP_UNPROCESSABLE_ENTITY)
             ->assertJsonValidationErrors(['email']);
     }
@@ -127,15 +61,14 @@ class CreateCustomerTest extends TestCase
     /**
      * Try to create a customer with existing email address.
      */
-    public function testCreateCustomerWithExsitingEmailAddressAsEmployee()
+    public function testCreateCustomerWithExsitingEmailAddress()
     {
-        $user = factory(User::class)->create();
-        $customer = factory(Customer::class)->create();
-        $newCustomer = array_merge($this->generateCustomer(), ['email' => $customer->email]);
+        auth()->login($this->getEmployee());
 
-        $user->roles()->create(['name' => 'employee']);
+        $existingCustomer = factory(Customer::class)->create();
+        $newCustomer = array_merge($this->generateCustomer(), ['email' => $existingCustomer->email]);
 
-        $this->createCustomer($newCustomer, auth()->login($user))
+        $this->createCustomer($newCustomer)
             ->assertStatus(JsonResponse::HTTP_UNPROCESSABLE_ENTITY)
             ->assertJsonValidationErrors(['email']);
     }
@@ -145,14 +78,13 @@ class CreateCustomerTest extends TestCase
      */
     public function testCreateCustomerWithShortPhoneNumberAsEmployee()
     {
-        $user = factory(User::class)->create();
-        $newCustomer = $this->generateCustomer();
+        auth()->login($this->getEmployee());
 
-        $newCustomer['cellphone_number'] = '072 95';
+        $customer = $this->generateCustomer();
 
-        $user->roles()->create(['name' => 'employee']);
+        $customer['cellphone_number'] = '072 95';
 
-        $this->createCustomer($newCustomer, auth()->login($user))
+        $this->createCustomer($customer)
             ->assertStatus(JsonResponse::HTTP_UNPROCESSABLE_ENTITY)
             ->assertJsonValidationErrors(['cellphone_number']);
     }
@@ -162,14 +94,13 @@ class CreateCustomerTest extends TestCase
      */
     public function testCreateCustomerWithLongPhoneNumberAsEmployee()
     {
-        $user = factory(User::class)->create();
-        $newCustomer = $this->generateCustomer();
+        auth()->login($this->getEmployee());
 
-        $newCustomer['cellphone_number'] = $newCustomer['cellphone_number'] . $newCustomer['cellphone_number'];
+        $customer = $this->generateCustomer();
 
-        $user->roles()->create(['name' => 'employee']);
+        $customer['cellphone_number'] = $customer['cellphone_number'] . $customer['cellphone_number'];
 
-        $this->createCustomer($newCustomer, auth()->login($user))
+        $this->createCustomer($customer)
             ->assertStatus(JsonResponse::HTTP_UNPROCESSABLE_ENTITY)
             ->assertJsonValidationErrors(['cellphone_number']);
     }
@@ -193,12 +124,10 @@ class CreateCustomerTest extends TestCase
      * Create new customer account.
      *
      * @param array $data
-     * @param string $token
      * @return TestResponse
      */
-    protected function createCustomer(array $data, string $token = ''): TestResponse
+    protected function createCustomer(array $data): TestResponse
     {
-        return $this->withHeader('Authorization', $token)
-            ->json('POST', 'api/customers/create', $data);
+        return $this->json('POST', 'api/customers/create', $data);
     }
 }

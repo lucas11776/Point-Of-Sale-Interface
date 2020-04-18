@@ -17,16 +17,15 @@ class UploadProfilePictureTest extends TestCase
     public function testUploadProfilePicture()
     {
         Storage::fake('public');
+        $token = auth()->login($user = $this->getUser());
+        $data = [
+            'image' => $file = UploadedFile::fake()->image('test_image.png')->size(1.5*1000)
+        ];
 
-        $token = auth()->login($user = User::first());
-        $file = UploadedFile::fake()->image('test_image.png')->size(1.5*1000);
-        $data = ['image' => $file];
-
-        $this->upload($data, $token)
+        $this->upload($data)
             ->assertOk();
-
-        Storage::disk('public')->assertMissing($file->hashName());
-
+        Storage::disk('public')
+            ->assertMissing($file->hashName());
         $this->assertTrue(
             'public/' . $file->hashName() == $user->image->path,
             'User profile picture has been uploaded but user image path has not changed.'
@@ -39,11 +38,11 @@ class UploadProfilePictureTest extends TestCase
     public function testUploadProfilePictureWithInvalidExtension()
     {
         Storage::fake('public');
+        auth()->login($user = $this->getUser());
 
-        $token = auth()->login($user = User::first());
         $data = ['image' => $file = UploadedFile::fake()->image('document.pdf')->size(1.5*1000)];
 
-        $this->upload($data, $token)
+        $this->upload($data)
             ->assertStatus(JsonResponse::HTTP_UNPROCESSABLE_ENTITY)
             ->assertJsonValidationErrors(['image']);
     }
@@ -54,11 +53,11 @@ class UploadProfilePictureTest extends TestCase
     public function testUploadProfilePictureWithMaxOutSize()
     {
         Storage::fake('public');
+        auth()->login($user = $this->getUser());
 
-        $token = auth()->login($user = User::first());
         $data = ['image' => $file = UploadedFile::fake()->image('test_image.png')->size(3*1000)];
 
-        $this->upload($data, $token)
+        $this->upload($data)
             ->assertStatus(JsonResponse::HTTP_UNPROCESSABLE_ENTITY)
             ->assertJsonValidationErrors(['image']);
     }
@@ -69,11 +68,9 @@ class UploadProfilePictureTest extends TestCase
     public function testUploadProfilePictureWithEmptyImage()
     {
         Storage::fake('public');
+        auth()->login($user = $this->getUser());
 
-        $token = auth()->login($user = User::first());
-        $data = ['image' => ''];
-
-        $this->upload($data, $token)
+        $this->upload([])
             ->assertStatus(JsonResponse::HTTP_UNPROCESSABLE_ENTITY)
             ->assertJsonValidationErrors(['image']);
     }
@@ -85,9 +82,8 @@ class UploadProfilePictureTest extends TestCase
      * @param string $token
      * @return TestResponse
      */
-    public function upload(array $data, string $token = ''): TestResponse
+    public function upload(array $data): TestResponse
     {
-        return $this->withHeader('Authorization', $token)
-            ->json('PATCH', 'api/user/upload', $data);
+        return $this->json('PATCH', 'api/user/upload', $data);
     }
 }

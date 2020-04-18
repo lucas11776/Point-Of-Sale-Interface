@@ -51,9 +51,11 @@ class CustomerController extends Controller
      * @param CustomerRequest $validate
      * @return JsonResponse
      */
-    public function update(Customer $customer, CustomerRequest $validate): JsonResponse
+    public function update(Customer $customer, CustomerRequest $validator): JsonResponse
     {
-        return response()->json();
+        $customer->update($validator->validated());
+
+        return response()->json(['message' => 'Customer has been updated.']);
     }
 
     /**

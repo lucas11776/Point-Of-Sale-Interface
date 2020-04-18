@@ -43,7 +43,7 @@ class CustomerRequest extends FormRequest
                 {
                     return $this->json('email') ? false : true;
                 }
-                ), 'string', 'min:10', 'max:25', Rule::unique(\App\Customer::class)->ignore($this->customer)
+                ), 'string', 'min:10', 'max:20', Rule::unique(\App\Customer::class)->ignore($this->customer)
             ]
         ];
     }

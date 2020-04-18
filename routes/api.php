@@ -34,10 +34,10 @@ Route::prefix('authentication')->namespace('authentication')->group(function() {
  * Customers Routes.
  */
 Route::prefix('customers')->namespace('customers')->group(function() {
-    Route::post('create', 'CustomerController@Store')->middleware(['api.user', 'api.employee']);
-    Route::patch('update/{customer}', 'CustomerController@Update');
-    Route::delete('delete/{customer}', 'CustomerController@Destroy');
     Route::get('', 'CustomerController@Index');
+    Route::post('create', 'CustomerController@Store')->middleware(['api.user', 'api.employee']);
+    Route::patch('{customer}/update', 'CustomerController@Update');
+    Route::delete('{customer}/delete', 'CustomerController@Destroy');
     Route::get('{customer}', 'CustomerController@Index');
 });
 

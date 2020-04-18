@@ -55,15 +55,6 @@ class LoginUserTest extends TestCase
     }
 
     /**
-     * Try to login with empty password
-     */
-    public function testLoginWithEmptyEmail()
-    {
-        $this->login(['email' => '', 'password' => self::USER_PASSWORD,])
-            ->assertStatus(JsonResponse::HTTP_UNPROCESSABLE_ENTITY);
-    }
-
-    /**
      * Try to login with Invalid email address.
      */
     public function testLoginWithInvalidEmail()
@@ -73,18 +64,6 @@ class LoginUserTest extends TestCase
         $this->login(['email' => str_replace('@', '', $user->email), 'password' => self::USER_PASSWORD])
             ->assertStatus(JsonResponse::HTTP_UNPROCESSABLE_ENTITY)
             ->assertJsonValidationErrors(['email']);
-    }
-
-    /**
-     * Try to login with out password.
-     */
-    public function testLoginWithEmptyPassword()
-    {
-        $user = factory(User::class)->create();
-
-        $this->login(['email' => $user->email, 'password' => ''])
-            ->assertStatus(JsonResponse::HTTP_UNPROCESSABLE_ENTITY)
-            ->assertJsonValidationErrors(['password']);
     }
 
     /**

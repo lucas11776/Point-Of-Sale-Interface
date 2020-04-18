@@ -69,36 +69,6 @@ class RegisterTest extends TestCase
     }
 
     /**
-     * Try to register with empty first name.
-     */
-    public function testRegisterWithEmptyFirstName()
-    {
-        $this->register($this->generateUser('first_name'))
-            ->assertStatus(JsonResponse::HTTP_UNPROCESSABLE_ENTITY)
-            ->assertJsonValidationErrors(['first_name']);
-    }
-
-    /**
-     * Try to register with empty first last name.
-     */
-    public function testRegisterWithEmptyLastName()
-    {
-        $this->register($this->generateUser('last_name'))
-            ->assertStatus(JsonResponse::HTTP_UNPROCESSABLE_ENTITY)
-            ->assertJsonValidationErrors(['last_name']);
-    }
-
-    /**
-     * Try to register with empty email address
-     */
-    public function testRegisterWithEmptyEmail()
-    {
-        $this->register($this->generateUser('email'))
-            ->assertStatus(JsonResponse::HTTP_UNPROCESSABLE_ENTITY)
-            ->assertJsonValidationErrors('email');
-    }
-
-    /**
      * Try to register with invalid email address.
      */
     public function testRegisterWithInvalidEmail()
@@ -108,26 +78,6 @@ class RegisterTest extends TestCase
 
         $this->register($newUser)->assertStatus(JsonResponse::HTTP_UNPROCESSABLE_ENTITY)
             ->assertJsonValidationErrors('email');
-    }
-
-    /**
-     * Try to register with empty password.
-     */
-    public function testRegiterWithEmptyPassword()
-    {
-        $this->register($this->generateUser('password'))
-            ->assertStatus(JsonResponse::HTTP_UNPROCESSABLE_ENTITY)
-            ->assertJsonValidationErrors('password');
-    }
-
-    /**
-     * Try to register with empty password confirmation.
-     */
-    public function testRegisterWithEmptyPasswordConfirmation()
-    {
-        $this->register($this->generateUser($key = 'password_confirmation'))
-            ->assertStatus(JsonResponse::HTTP_UNPROCESSABLE_ENTITY)
-            ->assertJsonValidationErrors('password');
     }
 
     /**
