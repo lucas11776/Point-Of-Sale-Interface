@@ -11,18 +11,22 @@ class CreateProductCategoryTest extends TestCase
 {
     /**
      * Try to create category.
-     * @param array $overideData
+     *
+     * @param array $paramdata
      */
-    public function testCreateCategory($overideData = [])
+    public function testCreateCategory($paramdata = [])
     {
         auth()->login($this->getAdministrator());
 
-        $data = array_merge(['name' => Faker::create()->jobTitle], $overideData);
+        $data = array_merge(['name' => Faker::create()->jobTitle], $paramdata);
 
         $this->createCategory($data)
             ->assertOk();
     }
 
+    /**
+     * Try to create an existing category.
+     */
     public function testCreateCategoryWithExistingCategory()
     {
         auth()->login($this->getAdministrator());
