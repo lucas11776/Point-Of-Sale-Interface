@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers\Api\User;
 
+use App\User;
+use App\Role;
+use App\UsersRoles;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\AddRoleRequest;
-use App\Role;
-use App\User;
-use App\UsersRoles;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -36,13 +36,13 @@ class RoleController extends Controller
             );
         }
 
-        $this->addUserRoleRelationship($userId, $role);
+        $this->addRolePivot($userId, $role);
 
         return response()->json(['message' => 'User role has been added.']);
     }
 
     /**
-     * Check if user role exist.
+     * Check if user has role.
      *
      * @param int $userId
      * @param string $role
@@ -54,13 +54,13 @@ class RoleController extends Controller
     }
 
     /**
-     * Add user role relationship.
+     * Add user role relationship (pivot).
      *
      * @param int $userId
      * @param string $role
      * @return UsersRoles
      */
-    protected function addUserRoleRelationship(int $userId, string $role): UsersRoles
+    protected function addRolePivot(int $userId, string $role): UsersRoles
     {
         return User::where('id', $userId)->first()->addRole(
             $role = Role::where('name', $role)->first()

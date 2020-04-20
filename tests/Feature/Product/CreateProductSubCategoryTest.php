@@ -2,16 +2,14 @@
 
 namespace Tests\Feature\Product;
 
-use App\Category;
 use App\Product;
+use App\Category;
 use App\SubCategory;
-use Faker\Factory as Faker;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\TestResponse;
-use Illuminate\Foundation\Testing\WithFaker;
-use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Str;
 use Tests\TestCase;
+use Faker\Factory as Faker;
+use Illuminate\Support\Str;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Foundation\Testing\TestResponse;
 
 class CreateProductSubCategoryTest extends TestCase
 {

@@ -55,6 +55,7 @@ Route::prefix('user')->namespace('user')->group(function() {
  * Products Route
  */
 Route::prefix('products')->namespace('products')->group(function() {
+    Route::post('create', 'ProductController@Store')->middleware(['api.administrator']);
     Route::prefix('categories')->group(function() {
         Route::post('create', 'CategoryController@Store')->middleware(['api.administrator']);
         Route::prefix('sub')->group(function() {

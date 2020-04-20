@@ -16,7 +16,6 @@ class UploadProfilePictureTest extends TestCase
      */
     public function testUploadProfilePicture()
     {
-        Storage::fake('public');
         auth()->login($user = $this->getUser());
 
         $data = [
@@ -27,7 +26,7 @@ class UploadProfilePictureTest extends TestCase
             ->assertOk();
 
         Storage::disk('public')
-            ->assertMissing($file->hashName());
+            ->assertExists($file->hashName());
 
         $this->assertTrue(
             'public/' . $file->hashName() == $user->image->path,
@@ -40,7 +39,6 @@ class UploadProfilePictureTest extends TestCase
      */
     public function testUploadProfilePictureWithInvalidExtension()
     {
-        Storage::fake('public');
         auth()->login($user = $this->getUser());
 
         $data = ['image' => $file = UploadedFile::fake()->image('document.pdf')->size(1.5*1000)];
@@ -55,7 +53,6 @@ class UploadProfilePictureTest extends TestCase
      */
     public function testUploadProfilePictureWithMaxOutSize()
     {
-        Storage::fake('public');
         auth()->login($user = $this->getUser());
 
         $data = ['image' => $file = UploadedFile::fake()->image('test_image.png')->size(3*1000)];
@@ -70,7 +67,6 @@ class UploadProfilePictureTest extends TestCase
      */
     public function testUploadProfilePictureWithEmptyImage()
     {
-        Storage::fake('public');
         auth()->login($user = $this->getUser());
 
         $this->upload([])

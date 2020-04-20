@@ -4,10 +4,12 @@ namespace App\Http\Controllers\Api\User;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\UploadProfilePictureRequest;
+use App\Image;
 use App\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 class ProfilePictureController extends Controller
 {
@@ -19,9 +21,7 @@ class ProfilePictureController extends Controller
      */
     public function upload(UploadProfilePictureRequest $validator): JsonResponse
     {
-        $path = Storage::put('public', $image = $validator->validated()['image']);
-
-        $this->changeUserImage($path);
+        $this->changeUserImage($validator->validated()['image']);
 
         return response()->json(['message' => 'Profile picture has been uploaded.']);
     }
@@ -29,11 +29,13 @@ class ProfilePictureController extends Controller
     /**
      * Change user profile image.
      *
-     * @param string $path
+     * @param UploadedFile $image
      * @return bool
      */
-    protected function changeUserImage(string $path): bool
+    private function changeUserImage(UploadedFile $image): bool
     {
+        $path = Storage::put('public', $image);
+
         Storage::delete($user = auth()->user());
 
         return $user->image->update(['path' => $path, 'url' => url($path)]);

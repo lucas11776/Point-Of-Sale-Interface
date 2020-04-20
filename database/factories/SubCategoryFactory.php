@@ -5,11 +5,12 @@
 use App\Category;
 use App\SubCategory;
 use Faker\Generator as Faker;
-use Illuminate\Database\Eloquent\Factory;
+use Illuminate\Support\Str;
 
 $factory->define(SubCategory::class, function (Faker $faker) {
     return [
-        'category_id' => Category::query()->inRandomOrder()->first() ?? rand(1,20),
-        'name' => $faker->jobTitle
+        'category_id' => factory(Category::class)->create()->id,
+        'name' => $name = $faker->unique()->jobTitle,
+        'slug' => Str::slug($name)
     ];
 });
