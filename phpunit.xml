@@ -29,6 +29,9 @@
         <testsuite name="User">
             <directory suffix="Test.php">./tests/Feature/User</directory>
         </testsuite>
+        <testsuite name="Transaction">
+            <directory suffix="Test.php">./tests/Feature/Transaction</directory>
+        </testsuite>
     </testsuites>
     <filter>
         <whitelist processUncoveredFilesFromWhitelist="true">

@@ -17,7 +17,7 @@ class AllowIfAdministrator extends BlockIfUnauthenticated
      */
     public function handle($request, Closure $next)
     {
-        if(! $this->isAdministrator()) {
+        if(! $this->isLoggedIn() ||  ! $this->isAdministrator()) {
             return response()->json(
                 ['Unauthorized Access.'], JsonResponse::HTTP_UNAUTHORIZED
             );

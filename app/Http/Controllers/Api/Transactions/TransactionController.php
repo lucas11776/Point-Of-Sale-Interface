@@ -1,0 +1,197 @@
+<?php /** @noinspection ALL */
+
+namespace App\Http\Controllers\Api\Transactions;
+
+use App\Sale;
+use App\Order;
+use App\Transaction;
+use App\Attachments;
+use App\Http\Requests\SaleRequest;
+use App\Http\Requests\OrderRequest;
+use App\Http\Controllers\Controller;
+use App\Http\Requests\AttachmentsRequest;
+use App\Http\Requests\TransactionRequest;
+use App\Repositories\TransactionRepository;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Collection;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
+
+class TransactionController extends Controller
+{
+    /**
+     * Transaction repository.
+     *
+     * @var TransactionRepository
+     */
+    protected $transaction;
+
+    /**
+     * TransactionController constructor.
+     *
+     * @param TransactionRepository $transaction
+     */
+    public function __construct(TransactionRepository $transaction)
+    {
+        $this->transaction = $transaction;
+    }
+
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function index()
+    {
+        //
+    }
+
+    /**
+     * Store a newly created transaction in storage.
+     *
+     * @param TransactionRequest $transactionValidator
+     * @param SaleRequest $salesValidator
+     * @return JsonResponse
+     */
+    public function store(
+        TransactionRequest $transactionValidator,
+        SaleRequest $salesValidator,
+        OrderRequest $orderValidator,
+        AttachmentsRequest $attachmentsValidator): JsonResponse
+    {
+        $transaction = $this->createTransaction(
+            $transactionValidator->validated()['transaction'] ?? [],
+            $salesValidator->validated()['sales']
+        );
+
+        if($order = $orderValidator->validated()['order'] ?? null) {
+            $order = $this->createOrder($transaction, $order);
+        }
+
+        if($attachments = $attachmentsValidator->validated()['attachments'] ?? null) {
+            $this->storeAttachments($order ?? $transaction, $attachments);
+        }
+
+        return response()->json([
+            'message' => 'Transaction has been proccesed.',
+            'data' => [
+                'transaction' => $transaction,
+                'sales' => $transaction->sales
+            ]
+        ]);
+    }
+
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function show($id)
+    {
+        //
+    }
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function update(Transaction $transaction)
+    {
+        //
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function destroy($id)
+    {
+        //
+    }
+
+    /**
+     * Create new order in database.
+     *
+     * @param array $data
+     * @return Order
+     */
+    protected function createOrder(Transaction $transaction, array $data): Order
+    {
+        return Order::create([
+            'orderizable_type' => get_class($transaction),
+            'customer_id' => $transaction->customer_id,
+            'orderizable_id' => $transaction->id,
+            'user_id' => auth()->user()->id,
+            'deadline' => $data['deadline'],
+            'message' => $data['message'],
+            'status' => $data['status'] ?? 'waiting'
+        ]);
+    }
+
+    /**
+     * Upload transaction attachements.
+     *
+     * @param Model $model
+     * @param array $attachements
+     * @return Collection
+     */
+    protected function uploadAttachments(array $attachements): Collection
+    {
+        return collect($attachements)->map(function(UploadedFile $attachement) {
+            return [
+                'path' => $path = $attachement->store('attachments'),
+                'mime_type' => $attachement->getMimeType(),
+                'url' => url($path),
+            ];
+        });
+    }
+
+    /**
+     * Store transaction attachments in storage.
+     *
+     * @param Model $model
+     * @param array $attachments
+     * @return bool
+     */
+    protected function storeAttachments(Model $model, array $attachments): bool
+    {
+        $attachments = $this->uploadAttachments($attachments)->map(function(array $attachment) use($model)  {
+            return array_merge($attachment, [
+                'attachmentable_id' => $model->id,
+                'attachmentable_type' => get_class($model)
+            ]);
+        });
+
+        return Attachments::insert($attachments->toArray());
+    }
+
+    /**
+     * Create a new transaction.
+     *
+     * @param array $data
+     * @return Transaction
+     */
+    private function createTransaction(array $transaction = [], array $sales): Transaction
+    {
+        return $this->transaction->checkout($this->mergeEmployeeId($transaction), $sales);
+    }
+
+    /**
+     * Merge current user id as employee.
+     *
+     * @param array $data
+     * @return array
+     */
+    private function mergeEmployeeId(array $data): array
+    {
+        return array_merge($data, ['employee' => auth()->user()->id]);
+    }
+}

@@ -17,7 +17,7 @@ class AllowIfEmployee extends AllowIfAdministrator
      */
     public function handle($request, Closure $next)
     {
-        if(! $this->isEmployee()) {
+        if(! $this->isLoggedIn() || ! $this->isEmployee()) {
             return response()->json(
                 ['Unauthorized Access.'], JsonResponse::HTTP_UNAUTHORIZED
             );

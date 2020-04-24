@@ -67,3 +67,6 @@ Route::prefix('products')->namespace('products')->group(function() {
 /**
  * Transactions
  */
+Route::prefix('transactions')->namespace('transactions')->group(function() {
+    Route::post('checkout', 'TransactionController@Store')->middleware(['api.employee']);
+});
