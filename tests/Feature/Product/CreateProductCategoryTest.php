@@ -10,33 +10,28 @@ use Illuminate\Foundation\Testing\TestResponse;
 class CreateProductCategoryTest extends TestCase
 {
     /**
-     * Try to create category.
+     * Setup the test environment.
      *
-     * @param array $paramdata
+     * @return void
      */
-    public function testCreateCategory($paramdata = [])
+    function setUp(): void
     {
+        parent::setUp();
+
         auth()->login($this->getAdministrator());
-
-        $data = array_merge(['name' => Faker::create()->jobTitle], $paramdata);
-
-        $this->createCategory($data)
-            ->assertOk();
     }
 
     /**
-     * Try to create an existing category.
+     * Try to create category.
+     *
+     * @param array $paramData
      */
-    public function testCreateCategoryWithExistingCategory()
+    public function testCreateCategory($paramData = [])
     {
-        auth()->login($this->getAdministrator());
-
-        $data = ['name' => Faker::create()->jobTitle];
-
-        $this->testCreateCategory($data);
+        $data = array_merge(['name' => Faker::create()->jobTitle], $paramData);
 
         $this->createCategory($data)
-            ->assertJsonValidationErrors(['name']);
+            ->assertOk();
     }
 
     /**
@@ -44,10 +39,21 @@ class CreateProductCategoryTest extends TestCase
      */
     public function testCreateCategoryWithEmptyData()
     {
-        auth()->login($this->getAdministrator());
-
         $this->createCategory()
             ->assertStatus(JsonResponse::HTTP_UNPROCESSABLE_ENTITY)
+            ->assertJsonValidationErrors(['name']);
+    }
+
+    /**
+     * Try to create an existing category.
+     */
+    public function testCreateCategoryWithExistingName()
+    {
+        $data = ['name' => Faker::create()->jobTitle];
+
+        $this->testCreateCategory($data);
+
+        $this->createCategory($data)
             ->assertJsonValidationErrors(['name']);
     }
 

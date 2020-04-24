@@ -20,17 +20,23 @@
         <testsuite name="Authentication">
             <directory suffix="Test.php">./tests/Feature/Authentication</directory>
         </testsuite>
-        <testsuite name="Customer">
-            <directory suffix="Test.php">./tests/Feature/Customer</directory>
-        </testsuite>
-        <testsuite name="Employee">
-        <directory suffix="Test.php">./tests/Feature/Employee</directory>
-        </testsuite>
         <testsuite name="User">
             <directory suffix="Test.php">./tests/Feature/User</directory>
         </testsuite>
+        <testsuite name="Product">
+            <directory suffix="Test.php">./tests/Feature/Product</directory>
+        </testsuite>
+        <testsuite name="Service">
+            <directory suffix="Test.php">./tests/Feature/Service</directory>
+        </testsuite>
         <testsuite name="Transaction">
             <directory suffix="Test.php">./tests/Feature/Transaction</directory>
+        </testsuite>
+        <testsuite name="Employee">
+            <directory suffix="Test.php">./tests/Feature/Employee</directory>
+        </testsuite>
+        <testsuite name="Customer">
+            <directory suffix="Test.php">./tests/Feature/Customer</directory>
         </testsuite>
     </testsuites>
     <filter>

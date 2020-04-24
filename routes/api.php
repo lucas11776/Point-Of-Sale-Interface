@@ -65,6 +65,15 @@ Route::prefix('products')->namespace('products')->group(function() {
 });
 
 /**
+ * Service Route
+ */
+Route::prefix('services')->namespace('Services')->group(function() {
+    Route::prefix('categories')->group(function() {
+        Route::post('create', 'CategoryController@Store')->middleware(['api.administrator']);
+    });
+});
+
+/**
  * Transactions
  */
 Route::prefix('transactions')->namespace('transactions')->group(function() {
