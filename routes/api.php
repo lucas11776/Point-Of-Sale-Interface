@@ -70,6 +70,9 @@ Route::prefix('products')->namespace('products')->group(function() {
 Route::prefix('services')->namespace('Services')->group(function() {
     Route::prefix('categories')->group(function() {
         Route::post('create', 'CategoryController@Store')->middleware(['api.administrator']);
+        Route::prefix('sub')->group(function() {
+            Route::post('{category}/create', 'SubCategoryController@Store')->middleware(['api.administrator']);
+        });
     });
 });
 

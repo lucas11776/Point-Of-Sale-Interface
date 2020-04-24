@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Service;
 
+use App\Category;
 use Tests\TestCase;
 use Faker\Factory as Faker;
 use Illuminate\Http\JsonResponse;
