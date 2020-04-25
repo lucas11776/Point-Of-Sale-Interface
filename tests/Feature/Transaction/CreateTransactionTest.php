@@ -35,7 +35,7 @@ class CreateTransactionTest extends TestCase
 
         auth()->login($this->getEmployee());
 
-        $this->generateSales();
+        $this->sales = $this->generateSales();
     }
 
     /**
@@ -268,49 +268,5 @@ class CreateTransactionTest extends TestCase
             'deadline' => date('l d M Y h:ma', time() + (24 * (60*60))),
             'message' => Faker::create()->sentence(10, 50)
         ];
-    }
-
-    /**
-     * Get new attachments
-     *
-     * @return array
-     */
-    protected function generateAttachments(): array
-    {
-        return [
-            UploadedFile::fake()->image('t-shirt-print.png', 1*1000),
-            UploadedFile::fake()->create('resume.docx', '1.9*1000'),
-            UploadedFile::fake()->create('application.pdf', '1.2*1000'),
-            UploadedFile::fake()->create('video.mp4', 50*1000),
-            UploadedFile::fake()->create('music.gif', 5*1000),
-        ];
-    }
-
-    /**
-     * Generate sales for a transaction.
-     *
-     * @return void
-     */
-    protected function generateSales()
-    {
-        $this->sales = collect()
-            ->merge(factory(Product::class)->times(10)->create())
-            ->map(function(object $item) {
-                return $this->itemToSale($item);
-            });
-    }
-
-    /**
-     * Assert if attachments are upload in local storage.
-     *
-     * @param array $attachments
-     */
-    protected function assertAttachmetsExists(Collection $attachments = null)
-    {
-        $this->assertFalse(is_null($attachments), 'Transaction attachments are not stored in storage');
-
-        $attachments->map(function(Attachments $attachments) {
-            Storage::assertExists($attachments->path);
-        });
     }
 }

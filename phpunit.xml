@@ -38,6 +38,9 @@
         <testsuite name="Customer">
             <directory suffix="Test.php">./tests/Feature/Customer</directory>
         </testsuite>
+        <testsuite name="Attachment">
+            <directory suffix="Test.php">./tests/Feature/Attachment</directory>
+        </testsuite>
     </testsuites>
     <filter>
         <whitelist processUncoveredFilesFromWhitelist="true">

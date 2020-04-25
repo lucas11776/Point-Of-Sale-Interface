@@ -5,6 +5,7 @@ namespace App;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 use Illuminate\Notifications\Notifiable;
@@ -77,6 +78,16 @@ class User extends Authenticatable implements JWTSubject
     public function addRole(Role $role): Model
     {
         return $this->hasOne(UsersRoles::class)->create(['role_id' => $role->id]);
+    }
+
+    /**
+     * Get user attachments.
+     *
+     * @return MorphMany
+     */
+    public function attachments(): MorphMany
+    {
+        return $this->morphMany(Attachments::class, 'attachmentable');
     }
 
     /**

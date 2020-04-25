@@ -25,20 +25,15 @@ Route::get('/', ['name' => 'Point Of Sale (Web base Software).', 'version' => '1
 Route::prefix('authentication')->namespace('authentication')->group(function() {
     Route::post('register', 'AuthController@Register')->middleware(['api.guest']);
     Route::post('login', 'AuthController@Login')->middleware(['api.guest']);
-    Route::post('me', 'AuthController@Me')->middleware(['api.user']);
     Route::post('refresh', 'AuthController@Refresh')->middleware(['api.user']);
-    Route::post('logout', 'AuthController@Logout')->middleware(['api.user']);
 });
 
 /**
  * Customers Routes.
  */
 Route::prefix('customers')->namespace('customers')->group(function() {
-    Route::get('', 'CustomerController@Index');
     Route::post('create', 'CustomerController@Store')->middleware(['api.employee']);
     Route::patch('{customer}/update', 'CustomerController@Update');
-    Route::delete('{customer}/delete', 'CustomerController@Destroy');
-    Route::get('{customer}', 'CustomerController@Index');
 });
 
 /**
@@ -49,6 +44,9 @@ Route::prefix('user')->namespace('user')->group(function() {
     Route::patch('upload', 'ProfilePictureController@Upload')->middleware(['api.user']);
     Route::patch('change/password', 'ChangePasswordController@Change')->middleware(['api.user']);
     Route::post('{user}/add/role', 'RoleController@Add')->middleware(['api.administrator']);
+    Route::prefix('attachments')->group(function() {
+        Route::post('create', 'AttachmentController@Store')->middleware(['api.user']);
+    });
 });
 
 /**

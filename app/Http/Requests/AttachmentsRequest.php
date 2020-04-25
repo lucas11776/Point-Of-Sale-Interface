@@ -2,8 +2,11 @@
 
 namespace App\Http\Requests;
 
+use App\Attachments;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Route;
 use Illuminate\Validation\Rule;
+use function foo\func;
 
 class AttachmentsRequest extends FormRequest
 {
@@ -26,10 +29,12 @@ class AttachmentsRequest extends FormRequest
     {
         return [
             'attachments' => [
-                'nullable', 'array'
+                Rule::requiredIf(function() {
+                    return in_array(Route::current()->uri, ['api/user/attachments/create']);
+                }),'nullable', 'array'
             ],
             'attachments.*' => [
-                'required', 'file', 'mimes:jpg,jpeg,png,gif,pdf,docx,mp3,mp4', 'max:' . (100*1000) . ''
+                'required', 'file', 'mimes:' . implode(',', Attachments::ALLOWED_EXTENSIONS), 'max:' . (100*1000) . ''
             ]
         ];
     }

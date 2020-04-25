@@ -21,7 +21,9 @@ class CreateProductSubCategoryTest extends TestCase
         auth()->login($this->getAdministrator());
 
         $category = $this->getProductCategory();
-        $data = ['name' => Faker::create()->jobTitle];
+        $data = [
+            'name' => Faker::create()->jobTitle
+        ];
 
         $this->createSubCategory($category->id, $data)
             ->assertOk();

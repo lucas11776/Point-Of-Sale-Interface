@@ -6,6 +6,7 @@ use App\Sale;
 use App\Order;
 use App\Transaction;
 use App\Attachments;
+use App\Traits\AttachmentTrait;
 use App\Http\Requests\SaleRequest;
 use App\Http\Requests\OrderRequest;
 use App\Http\Controllers\Controller;
@@ -20,6 +21,8 @@ use Illuminate\Http\Request;
 
 class TransactionController extends Controller
 {
+    use AttachmentTrait;
+
     /**
      * Transaction repository.
      *
@@ -134,43 +137,6 @@ class TransactionController extends Controller
             'message' => $data['message'],
             'status' => $data['status'] ?? 'waiting'
         ]);
-    }
-
-    /**
-     * Upload transaction attachements.
-     *
-     * @param Model $model
-     * @param array $attachements
-     * @return Collection
-     */
-    protected function uploadAttachments(array $attachements): Collection
-    {
-        return collect($attachements)->map(function(UploadedFile $attachement) {
-            return [
-                'path' => $path = $attachement->store('attachments'),
-                'mime_type' => $attachement->getMimeType(),
-                'url' => url($path),
-            ];
-        });
-    }
-
-    /**
-     * Store transaction attachments in storage.
-     *
-     * @param Model $model
-     * @param array $attachments
-     * @return bool
-     */
-    protected function storeAttachments(Model $model, array $attachments): bool
-    {
-        $attachments = $this->uploadAttachments($attachments)->map(function(array $attachment) use($model)  {
-            return array_merge($attachment, [
-                'attachmentable_id' => $model->id,
-                'attachmentable_type' => get_class($model)
-            ]);
-        });
-
-        return Attachments::insert($attachments->toArray());
     }
 
     /**

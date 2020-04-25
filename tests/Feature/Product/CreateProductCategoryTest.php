@@ -54,6 +54,7 @@ class CreateProductCategoryTest extends TestCase
         $this->testCreateCategory($data);
 
         $this->createCategory($data)
+            ->assertStatus(JsonResponse::HTTP_UNPROCESSABLE_ENTITY)
             ->assertJsonValidationErrors(['name']);
     }
 
