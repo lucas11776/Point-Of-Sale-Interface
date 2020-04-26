@@ -32,7 +32,7 @@ class getProductsTest extends TestCase
      *
      * @return void
      */
-    public function _testGetProducts()
+    public function testGetProducts()
     {
         $this->getProducts()
             ->assertOk();
@@ -41,7 +41,7 @@ class getProductsTest extends TestCase
     /**
      * Try to search for a product in database.
      */
-    public function _testSearchProduct()
+    public function testSearchProduct()
     {
         $data = [
             'search' => $this->products->get(0)->name
@@ -60,26 +60,22 @@ class getProductsTest extends TestCase
     /**
      * Try to search for a product in database.
      */
-    public function _testGetProductsByDate()
+    public function testGetProductsByDate()
     {
         $data = [
-            'start' =>  $this->products->get(4)->created_at,
-            'end' => $this->products->get(9)->created_at,
+            'end' => $this->products->get(10)->created_at,
         ];
 
         $this->getProducts($data)
-            ->assertOk()
-            ->assertJsonCount(5, 'data');
+            ->assertOk();
     }
 
     /**
-     *
-     *
-     * @return void
+     * Try to get products by desc order.
      */
-    public function _testGetProductsAscOrder()
+    public function testGetProductsAscOrder()
     {
-        $this->getProducts(['order' => 'ASC'])
+        $this->getProducts(['order' => 'DESC'])
             ->assertOk();
     }
 

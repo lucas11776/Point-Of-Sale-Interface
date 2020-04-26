@@ -19,4 +19,9 @@ $factory->define(Product::class, function (Faker $faker) {
         'price' => $price = rand(20, 200),
         'discount' => (rand(1,10)%2 == 0) ? rand(round($price%2), $price) : null,
     ];
+})->afterCreating(Product::class, function (Product $product, Faker $faker) {
+    return $product->image()->create([
+        'path' => '',
+        'url' => $faker->imageUrl()
+    ]);
 });

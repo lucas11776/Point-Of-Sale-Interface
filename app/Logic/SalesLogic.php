@@ -18,7 +18,7 @@ class SalesLogic implements SalesInterface
     public function create(Transaction $transaction, Collection $sales): Collection
     {
         return $sales->map(function($sale) use ($transaction) {
-            return Sale::create($this->mergeTransactionIdWithSale($transaction, $sale));
+            return Sale::create($this->formatTransactionAndSale($transaction, (array) $sale));
         });
     }
 
@@ -41,18 +41,18 @@ class SalesLogic implements SalesInterface
     }
 
     /**
-     * Merge transaction and sales to single array
+     * Format the transaction and sale to a single entity.
      *
      * @param Transaction $transaction
-     * @param $sale
+     * @param array $sale
      * @return array
      */
-    private function mergeTransactionIdWithSale(Transaction $transaction, $sale): array
+    private function formatTransactionAndSale(Transaction $transaction, array $sale): array
     {
-        return array_merge($sale = (array) $sale, [
-            'transaction_id' => $transaction->id,
-            'saleable_id' => $sale['id'],
-            'saleable_type' => $sale['type']
-        ]);
+        $sale['transaction_id'] = $transaction->id;
+        $sale['saleable_id'] = $sale['id'];
+        $sale['saleable_type'] = $sale['type'];
+
+        return $sale;
     }
 }

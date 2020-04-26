@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\Products;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ProductRequest;
 use App\Image;
+use App\Logic\FilterLogic;
 use App\Product;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\UploadedFile;
@@ -19,9 +20,11 @@ class ProductController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(): LengthAwarePaginator
+    public function index(Product $product): LengthAwarePaginator
     {
+        $filter = new FilterLogic($product);
 
+        return $filter->search(['name'])->date()->order('name')->builder()->paginate();
     }
 
     /**
