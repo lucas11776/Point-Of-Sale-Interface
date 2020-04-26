@@ -31,6 +31,24 @@ abstract class TestCase extends BaseTestCase
     }
 
     /**
+     * Sort collection array or object as
+     *
+     * @param string $attribute
+     * @param Collection $collection
+     * @return Collection
+     */
+    protected function sortCollectionBy(Collection $collection, string $attribute = 'id', string $direction = 'DESC')
+    {
+        return $collection->sortBy(function($item) use($attribute) {
+            if(empty($attribute)) {
+                return $item;
+            }
+
+            return isset($item[$attribute]) ? $item[$attribute] : $item->{$attribute};
+        });
+    }
+
+    /**
      * Get regular user account.
      *
      * @return User
@@ -95,7 +113,7 @@ abstract class TestCase extends BaseTestCase
      */
     protected function assertAttachmetsExists(Collection $attachments = null): void
     {
-        $this->assertFalse(is_null($attachments), 'Transaction attachments are not stored in storage.');
+        $this->assertFalse(is_null($attachments), 'TransactionLogic attachments are not stored in storage.');
 
         $attachments->map(function(Attachments $attachments) {
             Storage::assertExists($attachments->path);

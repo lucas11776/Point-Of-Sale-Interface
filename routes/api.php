@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -17,7 +18,12 @@ use Illuminate\Support\Facades\Route;
 /**
  * Api Home Request.
  */
-Route::get('/', ['name' => 'Point Of Sale (Web base Software).', 'version' => '1.1.0']);
+Route::get('', function (): JsonResponse {
+    return response()->json([
+        'name' => 'Point Of Sale (Web base Software).',
+        'version' => '1.1.0'
+    ]);
+});
 
 /**
  * Authetication Routes.
@@ -53,6 +59,7 @@ Route::prefix('user')->namespace('user')->group(function() {
  * Products Route
  */
 Route::prefix('products')->namespace('products')->group(function() {
+    Route::get('/', 'ProductController@Index');
     Route::post('create', 'ProductController@Store')->middleware(['api.administrator']);
     Route::prefix('categories')->group(function() {
         Route::post('create', 'CategoryController@Store')->middleware(['api.administrator']);
@@ -79,4 +86,11 @@ Route::prefix('services')->namespace('Services')->group(function() {
  */
 Route::prefix('transactions')->namespace('transactions')->group(function() {
     Route::post('checkout', 'TransactionController@Store')->middleware(['api.employee']);
+});
+
+/**
+ * 404 bad request
+ */
+Route::fallback(function(): JsonResponse {
+    return response()->json(['message' => 'Endpoint Not Found.'], JsonResponse::HTTP_NOT_FOUND);
 });

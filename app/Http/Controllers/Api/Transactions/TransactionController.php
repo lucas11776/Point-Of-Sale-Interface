@@ -12,7 +12,7 @@ use App\Http\Requests\OrderRequest;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\AttachmentsRequest;
 use App\Http\Requests\TransactionRequest;
-use App\Repositories\TransactionRepository;
+use App\Logic\TransactionLogic;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 use Illuminate\Http\UploadedFile;
@@ -24,18 +24,18 @@ class TransactionController extends Controller
     use AttachmentTrait;
 
     /**
-     * Transaction repository.
+     * TransactionLogic repository.
      *
-     * @var TransactionRepository
+     * @var TransactionLogic
      */
     protected $transaction;
 
     /**
      * TransactionController constructor.
      *
-     * @param TransactionRepository $transaction
+     * @param TransactionLogic $transaction
      */
-    public function __construct(TransactionRepository $transaction)
+    public function __construct(TransactionLogic $transaction)
     {
         $this->transaction = $transaction;
     }
@@ -64,8 +64,7 @@ class TransactionController extends Controller
         AttachmentsRequest $attachmentsValidator): JsonResponse
     {
         $transaction = $this->createTransaction(
-            $transactionValidator->validated()['transaction'] ?? [],
-            $salesValidator->validated()['sales']
+            $transactionValidator->get('transaction') ?? [], $salesValidator->get('sales')
         );
 
         if($order = $orderValidator->validated()['order'] ?? null) {
@@ -77,10 +76,9 @@ class TransactionController extends Controller
         }
 
         return response()->json([
-            'message' => 'Transaction has been proccesed.',
+            'message' => 'TransactionLogic has been proccesed.',
             'data' => [
-                'transaction' => $transaction,
-                'sales' => $transaction->sales
+                'transaction' => $transaction
             ]
         ]);
     }
@@ -104,7 +102,7 @@ class TransactionController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Transaction $transaction)
+    public function update(TransactionLogic $transaction)
     {
         //
     }
@@ -143,7 +141,7 @@ class TransactionController extends Controller
      * Create a new transaction.
      *
      * @param array $data
-     * @return Transaction
+     * @return TransactionLogic
      */
     private function createTransaction(array $transaction = [], array $sales): Transaction
     {

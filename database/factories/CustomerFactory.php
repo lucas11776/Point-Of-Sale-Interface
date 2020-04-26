@@ -21,7 +21,7 @@ $factory->define(Customer::class, function (Faker $faker) {
     return [
         'first_name' => $faker->firstName,
         'last_name' => $faker->lastName,
-        'email' => $faker->unique()->email,
-        'cellphone_number' => $faker->phoneNumber,
+        'email' => $faker->unique(true)->email,
+        'cellphone_number' => $faker->unique()->phoneNumber,
     ];
 });

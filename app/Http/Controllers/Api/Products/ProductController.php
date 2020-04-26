@@ -7,8 +7,8 @@ use App\Http\Requests\ProductRequest;
 use App\Image;
 use App\Product;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
@@ -19,9 +19,9 @@ class ProductController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(): LengthAwarePaginator
     {
-        //
+
     }
 
     /**

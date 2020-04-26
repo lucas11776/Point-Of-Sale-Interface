@@ -1,9 +1,10 @@
 <?php
 
 
-namespace App\Repositories;
+namespace App\Logic;
 
 use App\Transaction;
+use Illuminate\Support\Collection;
 
 interface TransactionInterface
 {
@@ -23,14 +24,6 @@ interface TransactionInterface
      * @return Transaction
      */
     public function update(Transaction $transaction): Transaction;
-
-    /**
-     * Calculate sales total sum.
-     *
-     * @param \Illuminate\Support\Collection $sales
-     * @return float
-     */
-    public function sum(\Illuminate\Support\Collection $sales): float;
 
     /**
      * Delete a transaction from storate
