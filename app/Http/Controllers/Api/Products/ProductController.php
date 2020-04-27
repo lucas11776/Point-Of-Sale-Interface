@@ -36,8 +36,8 @@ class ProductController extends Controller
     public function store(ProductRequest $validator): JsonResponse
     {
         $data = array_merge($array1 = $validator->validated(), ['slug' => $array1['name']]);
-        $product = Product::create($data);
-        $product->image = $this->upload($product, $data['image']);
+
+        $this->upload(Product::create($data), $data['image']);
 
         return response()->json(['message' => 'Product has been added.']);
     }

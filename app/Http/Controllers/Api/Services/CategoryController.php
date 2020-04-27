@@ -42,8 +42,8 @@ class CategoryController extends Controller
     public function store(CategoryRequest $validator): JsonResponse
     {
         Category::create([
-            'categorizable_type' => Service::class,
             'name' => $name = $validator->validated()['name'],
+            'categorizable_type' => Service::class,
             'slug' => Str::slug(strtolower($name))
         ]);
 

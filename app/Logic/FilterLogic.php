@@ -71,8 +71,6 @@ class FilterLogic implements FilterInterface
         ! isset($dates['start']) ?: $this->query->whereDate($column, '>=', $this->formatDate($dates['start']));
         ! isset($dates['end']) ?: $this->query->whereDate($column, '<=', $this->formatDate($dates['end']));
 
-
-
         return $this;
     }
 
@@ -84,16 +82,6 @@ class FilterLogic implements FilterInterface
     public function builder(): Builder
     {
         return $this->query;
-    }
-
-    /**
-     * Validate search value in attributes.
-     *
-     * @return string
-     */
-    protected function searchValidator(): string
-    {
-        return request()->validate(['search' => ['nullable', 'string']])['search'] ?? '';
     }
 
     /**
@@ -112,6 +100,18 @@ class FilterLogic implements FilterInterface
     }
 
     /**
+     * Validate search value in attributes.
+     *
+     * @return string
+     */
+    protected function searchValidator(): string
+    {
+        return request()->validate([
+            'search' => ['nullable', 'string']
+        ])['search'] ?? '';
+    }
+
+    /**
      * Check if request order attribute is valid.
      *
      * @return string
@@ -119,7 +119,7 @@ class FilterLogic implements FilterInterface
     protected function orderValidator(): string
     {
         return request()->validate([
-            'order' => 'nullable', 'in:asc,desc,ASC,DESC'
+            'order' => ['nullable', 'in:asc,desc,ASC,DESC']
         ])['order'] ?? '';
     }
 
