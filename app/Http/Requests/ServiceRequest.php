@@ -1,10 +1,11 @@
-<?php
+<?php /** @noinspection PhpUndefinedFieldInspection */
 
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
-class ProductRequest extends FormRequest
+class ServiceRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -28,28 +29,22 @@ class ProductRequest extends FormRequest
                 'required', 'mimes:jpeg,png,jpg', 'max:2500'
             ],
             'category_id' => [
-                'required', 'integer', 'exists:categories,id'
+                'required', 'integer', Rule::exists('categories', 'id')
             ],
             'sub_category_id' => [
-                'required', 'integer', 'exists:sub_categories,id'
+                'required', 'integer', Rule::exists('sub_categories', 'id')
             ],
             'name' => [
-                'required', 'string', 'min:2', 'max:50'
+                'required', 'string', 'min:3', 'max:150', Rule::unique('services')->ignore($this->service)
             ],
             'brand' => [
-                'nullable', 'string', 'min:2', 'max:50'
-            ],
-            'in_stock' => [
-                'required', 'integer'
+                'required', 'string', 'min:3', 'max:150'
             ],
             'price' => [
                 'required', 'numeric'
             ],
             'discount' => [
                 'nullable', 'numeric'
-            ],
-            'quantity' => [
-                'nullable', 'integer'
             ]
         ];
     }

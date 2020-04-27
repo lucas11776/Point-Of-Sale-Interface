@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\ProductRequest;
 use App\Image;
 use App\Logic\FilterLogic;
+use App\Logic\ImageLogic;
 use App\Product;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\UploadedFile;
@@ -33,11 +34,11 @@ class ProductController extends Controller
      * @param ProductRequest $validator
      * @return JsonResponse
      */
-    public function store(ProductRequest $validator): JsonResponse
+    public function store(ProductRequest $validator, ImageLogic $imageLogic): JsonResponse
     {
-        $data = array_merge($array1 = $validator->validated(), ['slug' => $array1['name']]);
+        $data = $validator->validated();
 
-        $this->upload(Product::create($data), $data['image']);
+        $imageLogic->uploadImage($this->create($data), $data['image']);
 
         return response()->json(['message' => 'Product has been added.']);
     }
@@ -77,24 +78,23 @@ class ProductController extends Controller
     }
 
     /**
-     * TODO
+     * Create new product in storage.
      *
-     * Create trait for upload image because image update is used
-     * more then once in the application and in the same menor.
-     *
-     * Upload image to public dir.
-     *
-     * @param Model $model
-     * @param UploadedFile $image
-     * @return Image
+     * @param array $data
+     * @return Product
      */
-    private function upload(object $object, UploadedFile $file): Image
+    protected function create(array $data): Product
     {
-        return Image::create([
-            'imageable_id' => $object->id,
-            'imageable_type' => get_class($object),
-            'path' => $path = Storage::put('public', $file),
-            'url' => url($path)
+        return Product::create([
+            'category_id' => $data['category_id'],
+            'sub_category_id' => $data['sub_category_id'],
+            'name' => $data['name'],
+            'slug' => Str::slug($data['name']),
+            'brand' => $data['brand'] ?? null,
+            'in_stock' => $data['in_stock'],
+            'price' => $data['price'],
+            'discount' => $data['discount'],
+            'quantity' => $data['quantity']
         ]);
     }
 }

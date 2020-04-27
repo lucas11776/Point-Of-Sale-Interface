@@ -21,6 +21,7 @@ class CreateProductTest extends TestCase
     public function setUp(): void
     {
         parent::setUp();
+
         auth()->login($this->getAdministrator());
     }
 
@@ -31,7 +32,7 @@ class CreateProductTest extends TestCase
     {
         $data = array_merge(
             $this->generateProduct(),
-            $this->generateFakeImage()
+            $this->generateImage()
         );
 
         $this->createProduct($data)
@@ -57,7 +58,7 @@ class CreateProductTest extends TestCase
     {
         $data = array_merge(
             $this->generateProduct(),
-            $this->generateFakeImage(), ['price' => 'num', 'in_stock' => 'num']
+            $this->generateImage(), ['price' => 'num', 'in_stock' => 'num']
         );
 
         $this->createProduct($data)
@@ -72,7 +73,7 @@ class CreateProductTest extends TestCase
     {
         $data = array_merge(
             $this->generateProduct(),
-            $this->generateFakeImage('image.gif')
+            $this->generateImage('image.gif')
         );
 
         $this->createProduct($data)
@@ -87,45 +88,12 @@ class CreateProductTest extends TestCase
     {
         $data = array_merge(
             $this->generateProduct(),
-            $this->generateFakeImage('image.png', 4*1000)
+            $this->generateImage('image.png', 4*1000)
         );
 
         $this->createProduct($data)
             ->assertStatus(JsonResponse::HTTP_UNPROCESSABLE_ENTITY)
             ->assertJsonValidationErrors(['image']);
-    }
-
-    /**
-     * Generate faker product
-     *
-     * @return array
-     */
-    protected function generateProduct(): array
-    {
-        return [
-            'category_id' => ($subCategory = factory(SubCategory::class)->create())->category->id,
-            'sub_category_id' => $subCategory->id,
-            'name' => $name = ($faker = Faker::create())->sentence(4, 8),
-            'slug' => Str::slug($name),
-            'brand' => $faker->company,
-            'in_stock' => rand(5,50),
-            'price' => rand(20, 200),
-            'discount' => rand(0, 150),
-        ];
-    }
-
-    /**
-     * Generate faker image.
-     *
-     * @param string $name
-     * @param float $sizeKilobytes
-     * @return array
-     */
-    protected function generateFakeImage(string $name = 'image.png', float $sizeKilobytes = 2*1000)
-    {
-        return [
-            'image' => $file = UploadedFile::fake()->image($name)->size($sizeKilobytes)
-        ];
     }
 
     /**

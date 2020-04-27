@@ -4,5 +4,5 @@ namespace Tests\Api;
 
 trait ApiTest
 {
-    use UserApi, CustomerApi, AttachmentsApi, SaleApi;
+    use UserApi, CustomerApi, AttachmentsApi, SaleApi, ServiceApi, ProductApi, ImageApi;
 }
