@@ -22,4 +22,20 @@ trait SaleApi
                 return $this->itemToSale($item);
             });
     }
+
+    /**
+     * Covert product to sales.
+     *
+     * @param object $item
+     * @return array
+     */
+    protected function itemToSale(object $item): array
+    {
+        return [
+            'id' => $item->id,
+            'type' => get_class($item),
+            'quantity' => $quantity = rand(1, 10),
+            'price' => (float) ($item->discount ?? $item->price) * $quantity,
+        ];
+    }
 }

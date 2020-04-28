@@ -80,6 +80,25 @@ class CreateTransactionTest extends TestCase
         );
     }
 
+    public function testCreateTransactionAndCheckProductQuantityHasChanged()
+    {
+        $data = [
+            'sales' => $this->sales,
+        ];
+        $sale = $this->productsFilter($data['sales'])->first();
+        $product = Product::where('id', $sale['id'])->first()->toArray();
+
+        $this->createTransaction($data)
+            ->assertOk()
+            ->assertJsonStructure(['message']);
+
+        $this->assertEquals(
+            $sale['quantity'] >= $product['in_stock'] ? 0 : $product['in_stock'] - $sale['quantity'],
+            Product::find($sale['id'])->in_stock,
+            'The number of product in stock does not match expected number after transaction'
+        );
+    }
+
     /**
      * Try to create a new transaction with attachments.
      */
@@ -242,22 +261,6 @@ class CreateTransactionTest extends TestCase
     }
 
     /**
-     * Covert product to sales.
-     *
-     * @param object $item
-     * @return array
-     */
-    protected function itemToSale(object $item): array
-    {
-        return [
-            'id' => $item->id,
-            'type' => get_class($item),
-            'quantity' => $quantity = rand(1, 10),
-            'price' => (float) ($item->discount ?? $item->price) * $quantity,
-        ];
-    }
-
-    /**
      * Get a new order.
      *
      * @return array
@@ -268,5 +271,18 @@ class CreateTransactionTest extends TestCase
             'deadline' => date('l d M Y h:ma', time() + (24 * (60*60))),
             'message' => Faker::create()->sentence(10, 50)
         ];
+    }
+
+    /**
+     * Filter products only.
+     *
+     * @param Collection $sales
+     * @return Collection
+     */
+    protected function productsFilter(Collection $sales): Collection
+    {
+        return $sales->filter(function($model) {
+            return $model['type'] == Product::class;
+        });
     }
 }

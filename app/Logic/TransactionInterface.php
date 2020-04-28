@@ -26,7 +26,7 @@ interface TransactionInterface
     public function update(Transaction $transaction): Transaction;
 
     /**
-     * Delete a transaction from storate
+     * Delete a transaction from storage.
      *
      * @param Transaction $transaction
      * @return bool

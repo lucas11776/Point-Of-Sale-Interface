@@ -4,8 +4,10 @@
 namespace Tests\Api;
 
 
+use App\Product;
 use App\SubCategory;
 use Faker\Factory as Faker;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 
 trait ProductApi

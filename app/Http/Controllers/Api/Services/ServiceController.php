@@ -8,6 +8,7 @@ use App\Logic\ImageLogic;
 use App\Service;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Str;
 
 class ServiceController extends Controller
@@ -17,7 +18,7 @@ class ServiceController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(): LengthAwarePaginator
     {
         //
     }
@@ -26,14 +27,14 @@ class ServiceController extends Controller
      * Store a newly created resource in storage.
      *
      * @param ServiceRequest $validator
-     * @param ImageLogic $imageLogic
+     * @param ImageLogic $image
      * @return JsonResponse
      */
-    public function store(ServiceRequest $validator, ImageLogic $imageLogic): JsonResponse
+    public function store(ServiceRequest $validator, ImageLogic $image): JsonResponse
     {
         $service = $this->create($data = $validator->validated());
 
-        $imageLogic->uploadImage($service, $data['image']);
+        $image->uploadImage($service, $data['image']);
 
         return response()->json(['message' => 'Service has been created']);
     }
@@ -42,11 +43,11 @@ class ServiceController extends Controller
      * Display the specified resource.
      *
      * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @return JsonResponse
      */
-    public function show($id)
+    public function show($id): JsonResponse
     {
-        //
+        return response()->json([]);
     }
 
     /**
@@ -54,22 +55,22 @@ class ServiceController extends Controller
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @return JsonResponse
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, $id): JsonResponse
     {
-        //
+        return response()->json([]);
     }
 
     /**
      * Remove the specified resource from storage.
      *
      * @param  int  $id
-     * @return \Illuminate\Http\Response
+     * @return JsonResponse
      */
-    public function destroy($id)
+    public function destroy($id): JsonResponse
     {
-        //
+        return response()->json([]);
     }
 
     /**
@@ -81,13 +82,13 @@ class ServiceController extends Controller
     protected function create(array $data): Service
     {
         return Service::create([
-            'category_id' => $data['category_id'],
-            'sub_category_id' => $data['sub_category_id'],
             'name' => $data['name'],
-            'slug' => Str::slug($data['name']),
-            'brand' => $data['brand'] ?? null,
             'price' => $data['price'],
+            'brand' => $data['brand'] ?? null,
+            'slug' => Str::slug($data['name']),
+            'category_id' => $data['category_id'],
             'discount' => $data['discount'] ?? null,
+            'sub_category_id' => $data['sub_category_id'],
         ]);
     }
 }

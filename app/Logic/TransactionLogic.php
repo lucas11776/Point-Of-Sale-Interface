@@ -34,7 +34,7 @@ class TransactionLogic implements TransactionInterface
     {
         $price = ['price' => $this->sales->sum(collect($sales))];
         $transaction = $this->create(array_merge($attributes, $price));
-        $transaction->sale = $this->sales->create($transaction, collect($sales));
+        $transaction->sale = $this->sales->store($transaction, collect($sales));
 
         return $transaction;
     }

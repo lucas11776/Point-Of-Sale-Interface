@@ -3,6 +3,7 @@
 
 namespace App\Logic;
 
+use App\Sale;
 use App\Transaction;
 use Illuminate\Support\Collection;
 
@@ -15,16 +16,7 @@ interface SalesInterface
      * @param Collection $sales
      * @return Collection
      */
-    public function create(Transaction $transaction, Collection $sales): Collection;
-
-    /**
-     * Revert sales form transaction.
-     *
-     * @param Transaction $transaction
-     * @param Collection $collection
-     * @return bool
-     */
-    public function revert(Transaction $transaction, Collection $collection): bool;
+    public function store(Transaction $transaction, Collection $sales): Collection;
 
     /**
      * Get total price of sales.
@@ -33,4 +25,12 @@ interface SalesInterface
      * @return float
      */
     public function sum(Collection $sales): float;
+
+    /**
+     * Revert sales form transaction.
+     *
+     * @param Sale $sale
+     * @return bool
+     */
+    public function delete(Sale $sale): bool;
 }
