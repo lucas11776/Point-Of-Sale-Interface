@@ -3,17 +3,16 @@
 namespace Tests\Feature\Product;
 
 use App\Product;
-use Illuminate\Foundation\Testing\TestResponse;
 use Tests\TestCase;
 use Illuminate\Support\Collection;
+use Illuminate\Foundation\Testing\TestResponse;
 
-class getProductsTest extends TestCase
+class GetProductsTest extends TestCase
 {
     /**
      * @var Collection
      */
     private $products;
-
 
     /**
      * Setup the test environment.
@@ -62,9 +61,7 @@ class getProductsTest extends TestCase
      */
     public function testGetProductsByDate()
     {
-        $data = [
-            'end' => $this->products->get(10)->created_at,
-        ];
+        $data = ['end' => $this->products->get(10)->created_at,];
 
         $this->getProducts($data)
             ->assertOk();

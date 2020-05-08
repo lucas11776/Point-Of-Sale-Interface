@@ -22,9 +22,22 @@ class FilterLogic implements FilterInterface
      *
      * @param Model $model
      */
-    public function __construct(Model $model)
+    public function __construct(Model $model = null)
+    {
+        is_null($model) ?: $this->query = $model->query();
+    }
+
+    /**
+     * Intialize query model.
+     *
+     * @param Model $model
+     * @return FilterLogic
+     */
+    public function filter(Model $model): FilterLogic
     {
         $this->query = $model->query();
+
+        return $this;
     }
 
     /**
@@ -67,10 +80,8 @@ class FilterLogic implements FilterInterface
     public function date(string $column = 'created_at'): FilterLogic
     {
         $dates = $this->dateValidator();
-
-        ! isset($dates['start']) ?: $this->query->whereDate($column, '>=', $this->formatDate($dates['start']));
-        ! isset($dates['end']) ?: $this->query->whereDate($column, '<=', $this->formatDate($dates['end']));
-
+        ! isset($dates['start']) ?: $this->dateStartQuery($column, $dates['start']);
+        ! isset($dates['end']) ?: $this->dateEndQuery($column, $dates['end']);
         return $this;
     }
 
@@ -92,6 +103,8 @@ class FilterLogic implements FilterInterface
      */
     protected function searchQueryBuilder(string $term, array $args): void
     {
+        // :TODO
+        // must implement better search
         for($i = 0; $i < count($args); $i++) {
             if($i == 0) {
                 $this->query->where($args[$i][0], 'LIKE', "%$term%");
@@ -106,9 +119,9 @@ class FilterLogic implements FilterInterface
      */
     protected function searchValidator(): string
     {
-        return request()->validate([
-            'search' => ['nullable', 'string']
-        ])['search'] ?? '';
+        $validator = request()->validate(['search' => ['nullable', 'string']]);
+
+        return $validator['search'] ?? '';
     }
 
     /**
@@ -118,9 +131,9 @@ class FilterLogic implements FilterInterface
      */
     protected function orderValidator(): string
     {
-        return request()->validate([
-            'order' => ['nullable', 'in:asc,desc,ASC,DESC']
-        ])['order'] ?? '';
+        $validator = request()->validate(['order' => ['nullable', 'in:asc,desc,ASC,DESC']]);
+
+        return $validator['order'] ?? '';
     }
 
     /**
@@ -134,6 +147,28 @@ class FilterLogic implements FilterInterface
             'start' => ['nullable','date'],
             'end' => ['nullable','date']
         ]);
+    }
+
+    /**
+     * Start getting query result form date.
+     *
+     * @param string $column
+     * @param string $date
+     */
+    protected function dateStartQuery(string $column, string $date): void
+    {
+        $this->query->whereDate($column, '>=', $this->formatDate($date));
+    }
+
+    /**
+     * End result form date.
+     *
+     * @param string $column
+     * @param string $date
+     */
+    protected function dateEndQuery(string $column, string $date): void
+    {
+        $this->query->whereDate($column, '<=', $this->formatDate($date));
     }
 
     /**

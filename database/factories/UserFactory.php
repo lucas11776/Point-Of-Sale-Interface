@@ -3,10 +3,9 @@
 /** @var Factory $factory */
 
 use App\User;
-use App\Image;
 use Faker\Generator as Faker;
-use Illuminate\Database\Eloquent\Factory;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Database\Eloquent\Factory;
 
 /*
 |--------------------------------------------------------------------------
@@ -23,10 +22,10 @@ $factory->define(User::class, function (Faker $faker) {
     return [
         'first_name' => $faker->firstName,
         'last_name' => $faker->lastName,
-        'email' => $faker->unique(true)->email,
+        'email' => $faker->unique(true, 1000)->email,
         'email_verified_at' => now(),
         'cellphone_number' => $faker->unique()->phoneNumber,
-        'password' => Hash::make('password'), // password
+        'password' => Hash::make('password'), // defualt password
     ];
 })->afterCreating(User::class, function(User $user, Faker $faker) {
     return $user->image()->create([

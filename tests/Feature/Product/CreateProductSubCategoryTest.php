@@ -22,7 +22,7 @@ class CreateProductSubCategoryTest extends TestCase
 
         $category = $this->getProductCategory();
         $data = [
-            'name' => Faker::create()->jobTitle
+            'name' => Faker::create()->unique(true, 1000)->jobTitle
         ];
 
         $this->createSubCategory($category->id, $data)

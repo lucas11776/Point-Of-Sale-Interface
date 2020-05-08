@@ -1,8 +1,6 @@
 <?php
 
-
 namespace Tests\Api;
-
 
 use App\Customer;
 use App\User;

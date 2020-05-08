@@ -1,37 +1,36 @@
-<?php /** @noinspection ALL */
+<?php
 
 namespace App\Http\Controllers\Api\Products;
 
+use App\Product;
+use App\Logic\ImageLogic;
+use App\Logic\FilterLogic;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ProductRequest;
-use App\Image;
-use App\Logic\FilterLogic;
-use App\Logic\ImageLogic;
-use App\Product;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\UploadedFile;
-use Illuminate\Pagination\LengthAwarePaginator;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 class ProductController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Display a pagination listing of products.
      *
-     * @return \Illuminate\Http\Response
+     * @param Product $product
+     * @param FilterLogic $filter
+     * @return LengthAwarePaginator
      */
-    public function index(Product $product): LengthAwarePaginator
+    public function index(Product $product, FilterLogic $filter): LengthAwarePaginator
     {
-        $filter = new FilterLogic($product);
-
-        return $filter->search(['name'])->date()->order('name')->builder()->paginate();
+        return $filter->filter($product)
+            ->date()->order('name')->search(['name'])->builder()->paginate();
     }
 
     /**
      * Store a newly created resource in storage.
      *
      * @param ProductRequest $validator
+     * @param ImageLogic $imageLogic
      * @return JsonResponse
      */
     public function store(ProductRequest $validator, ImageLogic $imageLogic): JsonResponse
@@ -86,15 +85,15 @@ class ProductController extends Controller
     protected function create(array $data): Product
     {
         return Product::create([
+            'name' => $data['name'],
+            'price' => $data['price'],
+            'in_stock' => $data['in_stock'],
+            'discount' => $data['discount'],
+            'quantity' => $data['quantity'],
+            'brand' => $data['brand'] ?? null,
+            'slug' => Str::slug($data['name']),
             'category_id' => $data['category_id'],
             'sub_category_id' => $data['sub_category_id'],
-            'name' => $data['name'],
-            'slug' => Str::slug($data['name']),
-            'brand' => $data['brand'] ?? null,
-            'in_stock' => $data['in_stock'],
-            'price' => $data['price'],
-            'discount' => $data['discount'],
-            'quantity' => $data['quantity']
         ]);
     }
 }

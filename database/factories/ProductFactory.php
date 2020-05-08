@@ -12,7 +12,7 @@ $factory->define(Product::class, function (Faker $faker) {
     return [
         'category_id' => ($subCategory = factory(SubCategory::class)->create())->category->id,
         'sub_category_id' => $subCategory->id,
-        'name' => $name = $faker->unique()->sentence(4, 8),
+        'name' => $name = $faker->unique(true, 1000)->sentence(4, 8),
         'slug' => Str::slug($name),
         'brand' => $faker->company,
         'in_stock' => rand(5,50),

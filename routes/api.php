@@ -29,16 +29,21 @@ Route::get('', function (): JsonResponse {
  * Authetication Routes.
  */
 Route::prefix('authentication')->namespace('authentication')->group(function() {
-    Route::post('register', 'AuthController@Register')->middleware(['api.guest']);
-    Route::post('login', 'AuthController@Login')->middleware(['api.guest']);
-    Route::post('refresh', 'AuthController@Refresh')->middleware(['api.user']);
+    Route::post('register', 'AuthController@Register')
+        ->middleware(['api.guest']);
+    Route::post('login', 'AuthController@Login')
+        ->middleware(['api.guest']);
+    Route::post('refresh', 'AuthController@Refresh')
+        ->middleware(['api.user']);
+    Route::get('loggedin', 'AuthController@Loggedin');
 });
 
 /**
  * Customers Routes.
  */
 Route::prefix('customers')->namespace('customers')->group(function() {
-    Route::post('create', 'CustomerController@Store')->middleware(['api.employee']);
+    Route::post('create', 'CustomerController@Store')
+        ->middleware(['api.employee']);
     Route::patch('{customer}/update', 'CustomerController@Update');
 });
 
@@ -46,12 +51,20 @@ Route::prefix('customers')->namespace('customers')->group(function() {
  * Users Routes.
  */
 Route::prefix('user')->namespace('user')->group(function() {
-    Route::patch('update', 'UserController@Update')->middleware(['api.user']);
-    Route::patch('upload', 'ProfilePictureController@Upload')->middleware(['api.user']);
-    Route::patch('change/password', 'ChangePasswordController@Change')->middleware(['api.user']);
-    Route::post('{user}/add/role', 'RoleController@Add')->middleware(['api.administrator']);
+    Route::patch('update', 'UserController@Update')
+        ->middleware(['api.user']);
+    Route::patch('upload', 'ProfilePictureController@Upload')
+        ->middleware(['api.user']);
+    Route::patch('change/password', 'ChangePasswordController@Change')
+        ->middleware(['api.user']);
+    Route::get('role/{role}', 'UserController@Role')
+        ->where('role', '(administrator|employee)')
+        ->middleware(['api.user']);
+    Route::post('{user}/add/role', 'RoleController@Add')
+        ->middleware(['api.administrator']);
     Route::prefix('attachments')->group(function() {
-        Route::post('create', 'AttachmentController@Store')->middleware(['api.user']);
+        Route::post('create', 'AttachmentController@Store')
+            ->middleware(['api.user']);
     });
 });
 
@@ -60,11 +73,14 @@ Route::prefix('user')->namespace('user')->group(function() {
  */
 Route::prefix('products')->namespace('products')->group(function() {
     Route::get('/', 'ProductController@Index');
-    Route::post('create', 'ProductController@Store')->middleware(['api.administrator']);
+    Route::post('create', 'ProductController@Store')
+        ->middleware(['api.administrator']);
     Route::prefix('categories')->group(function() {
-        Route::post('create', 'CategoryController@Store')->middleware(['api.administrator']);
+        Route::post('create', 'CategoryController@Store')
+            ->middleware(['api.administrator']);
         Route::prefix('sub')->group(function() {
-            Route::post('{category}/create', 'SubCategoryController@Store')->middleware(['api.administrator']);
+            Route::post('{category}/create', 'SubCategoryController@Store')
+                ->middleware(['api.administrator']);
         });
     });
 });
@@ -75,9 +91,11 @@ Route::prefix('products')->namespace('products')->group(function() {
 Route::prefix('services')->namespace('Services')->group(function() {
     Route::post('create', 'ServiceController@Store');
     Route::prefix('categories')->group(function() {
-        Route::post('create', 'CategoryController@Store')->middleware(['api.administrator']);
+        Route::post('create', 'CategoryController@Store')
+            ->middleware(['api.administrator']);
         Route::prefix('sub')->group(function() {
-            Route::post('{category}/create', 'SubCategoryController@Store')->middleware(['api.administrator']);
+            Route::post('{category}/create', 'SubCategoryController@Store')
+                ->middleware(['api.administrator']);
         });
     });
 });
@@ -86,7 +104,8 @@ Route::prefix('services')->namespace('Services')->group(function() {
  * Transactions
  */
 Route::prefix('transactions')->namespace('transactions')->group(function() {
-    Route::post('checkout', 'TransactionController@Store')->middleware(['api.employee']);
+    Route::post('checkout', 'TransactionController@Store')
+        ->middleware(['api.employee']);
 });
 
 /**

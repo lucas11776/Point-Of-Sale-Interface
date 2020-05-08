@@ -76,10 +76,13 @@ class CreateTransactionTest extends TestCase
 
         $this->assertTrue(
             $transaction->price == $this->sum(),
-            'Transactions price is not equal to total sales amount.'
+            'Transaction price is not equal to total sales sum.'
         );
     }
 
+    /**
+     * Try create a new transaction and check if product stock count has changed
+     */
     public function testCreateTransactionAndCheckProductQuantityHasChanged()
     {
         $data = [

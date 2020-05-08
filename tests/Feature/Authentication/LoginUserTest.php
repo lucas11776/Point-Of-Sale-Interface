@@ -3,10 +3,10 @@
 namespace Tests\Feature;
 
 use App\User;
-use Illuminate\Foundation\Testing\TestResponse;
-use Illuminate\Http\JsonResponse;
-use Faker\Factory as Faker;
 use Tests\TestCase;
+use Faker\Factory as Faker;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Foundation\Testing\TestResponse;
 
 class LoginUserTest extends TestCase
 {
@@ -26,7 +26,7 @@ class LoginUserTest extends TestCase
         ];
 
         $this->login($credentials)
-            ->assertStatus(JsonResponse::HTTP_OK);
+            ->assertOk();
     }
 
     /**

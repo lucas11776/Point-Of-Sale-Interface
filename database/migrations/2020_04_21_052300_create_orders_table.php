@@ -20,7 +20,7 @@ class CreateOrdersTable extends Migration
             $table->unsignedBigInteger('orderizable_id');
             $table->string('orderizable_type');
             $table->timestamps();
-            $table->timestamp('deadline');
+            $table->timestamp('deadline')->nullable();
             $table->string('status');
             $table->longText('message');
         });

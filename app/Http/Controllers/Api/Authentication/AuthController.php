@@ -5,21 +5,48 @@
 namespace App\Http\Controllers\Api\Authentication;
 
 use App\User;
-use App\Image;
+use App\Logic\AuthenticationLogic;
 use App\Http\Requests\LoginRequest;
-use App\Http\Requests\RegisterRequest;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Hash;
+use App\Http\Requests\RegisterRequest;
 use Illuminate\Http\JsonResponse;
 
 class AuthController extends Controller
 {
     /**
-     * Time taken in seconds before token expire.
-     *
      * @var integer
      */
-    public const TOKEN_EXPIRE = (60*60) * 12;
+    public const EXPIRE_HALF_DAY = (60*60) * 12;
+
+    /**
+     * @var integer
+     */
+    public const EXPIRE_IN_YEAR = ((60*60)*24) * 365;
+
+    /**
+     * @var AuthenticationLogic
+     */
+    private $authentication;
+
+    /**
+     * AuthController constructor.
+     *
+     * @param AuthenticationLogic $authentication
+     */
+    public function __construct(AuthenticationLogic $authentication)
+    {
+        $this->authentication = $authentication;
+    }
+
+    /**
+     * Check if user is loggedin.
+     *
+     * @return JsonResponse
+     */
+    public function loggedin(): JsonResponse
+    {
+        return response()->json(['result' => auth()->check()]);
+    }
 
     /**
      * Register new user in the application.
@@ -29,11 +56,9 @@ class AuthController extends Controller
      */
     public function register(RegisterRequest $validator): JsonResponse
     {
-        $token = auth()->login(
-            $user = $this->createNewUser($validator->validated())
+        return $this->respondWithToken(
+            $this->authentication->register($validator->validated())
         );
-
-        return $this->respondWithToken($token);
     }
 
     /**
@@ -44,14 +69,11 @@ class AuthController extends Controller
      */
     public function login(LoginRequest $validator): JsonResponse
     {
-
-        if(! $token = $this->attemptLogin($validator->validated())) {
-            return response()->json(
-                ['message' => 'Invalid credentials.'], JsonResponse::HTTP_UNAUTHORIZED
-            );
+        if(! $user = $this->authentication->attemptLogin($validator->validated())) {
+            return $this->invalidCredentials();
         }
 
-        return $this->respondWithToken($token);
+        return $this->respondWithToken($user);
     }
 
     /**
@@ -61,9 +83,9 @@ class AuthController extends Controller
      */
     public function refresh(): JsonResponse
     {
-        return $this->respondWithToken(
-            $token = auth()->refresh(true, true)
-        );
+        auth()->refresh(true, true);
+
+        return $this->respondWithToken(auth()->user());
     }
 
     /**
@@ -89,61 +111,28 @@ class AuthController extends Controller
     }
 
     /**
-     * Attempt to login the user.
+     * Invalid credentials response.
      *
-     * @param array $credentials
-     * @return string
+     * @return JsonResponse
      */
-    protected function attemptLogin(array $credentials): string
-    {
-        return auth()->setTTL(self::TOKEN_EXPIRE)->attempt($credentials);
+    protected function invalidCredentials(): JsonResponse {
+        return response()->json(
+            ['message' => 'Invalid email or password please try again.'], JsonResponse::HTTP_UNPROCESSABLE_ENTITY
+        );
     }
 
     /**
      * Respond with token and time token will expire in.
      *
-     * @param string $token
+     * @param User $user
+     * @param bool $stayLoggedin
      * @return JsonResponse
      */
-    protected function respondWithToken(string $token): JsonResponse
+    protected function respondWithToken(User $user, bool $stayLoggedin = false): JsonResponse
     {
         return response()->json([
-            'token' => $token,
-            'expire' => self::TOKEN_EXPIRE,
-        ]);
-    }
-
-    /**
-     * Create new user instance.
-     *
-     * @param array $data
-     * @return User
-     */
-    protected function createNewUser(array $data): User
-    {
-        $user = User::create([
-            'email' => $data['email'],
-            'last_name' => $data['last_name'],
-            'first_name' => $data['first_name'],
-            'password' => Hash::make($data['password']),
-        ]);
-
-        $user->image = $this->createUserImage($user);
-
-        return $user;
-    }
-
-    /**
-     * Create user profile picture image.
-     *
-     * @param User $user
-     * @return Image
-     */
-    protected function createUserImage(User $user): Image
-    {
-        return $user->image()->create([
-            'path' => '',
-            'url' => url(User::$defualtProfileImagePath)
+            'expire' => $expire = $stayLoggedin ? self::EXPIRE_HALF_DAY : self::EXPIRE_IN_YEAR,
+            'token' => auth()->setTTL($expire)->login($user),
         ]);
     }
 }

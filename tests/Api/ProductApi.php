@@ -22,7 +22,7 @@ trait ProductApi
         return [
             'category_id' => ($subCategory = factory(SubCategory::class)->create())->category->id,
             'sub_category_id' => $subCategory->id,
-            'name' => $name = ($faker = Faker::create())->sentence(4, 8),
+            'name' => $name = ($faker = Faker::create())->unique(true, 10000)->sentence(8, 20),
             'slug' => Str::slug($name),
             'brand' => $faker->company,
             'in_stock' => rand(5,50),

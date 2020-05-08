@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\User;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\UpdateUserRequest;
+use App\User;
 use Illuminate\Http\JsonResponse;
 
 class UserController extends Controller
@@ -11,12 +12,25 @@ class UserController extends Controller
     /**
      * Display the specified user.
      *
-     * @param AuthController $user
+     * @param User $user
      * @return JsonResponse
      */
-    public function show(AuthController $user): JsonResponse
+    public function show(User $user): JsonResponse
     {
         return response()->json($user);
+    }
+
+    /**
+     * Check if user role exist.
+     *
+     * @param string $role
+     * @return array
+     */
+    public function role(string $role)
+    {
+        $role = auth()->user()->roles()->where('name', $role)->first();
+
+        return ['result' => $role ? true : false];
     }
 
     /**
