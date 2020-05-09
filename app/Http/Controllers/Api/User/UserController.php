@@ -2,13 +2,29 @@
 
 namespace App\Http\Controllers\Api\User;
 
+use App\User;
+use App\Logic\AuthenticationLogic;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\UpdateUserRequest;
-use App\User;
 use Illuminate\Http\JsonResponse;
 
 class UserController extends Controller
 {
+    /**
+     * @var AuthenticationLogic
+     */
+    private $authentication;
+
+    /**
+     * UserController constructor.
+     *
+     * @param AuthenticationLogic $authentication
+     */
+    public function __construct(AuthenticationLogic $authentication)
+    {
+        $this->authentication = $authentication;
+    }
+
     /**
      * Display the specified user.
      *
@@ -24,13 +40,11 @@ class UserController extends Controller
      * Check if user role exist.
      *
      * @param string $role
-     * @return array
+     * @return JsonResponse
      */
-    public function role(string $role)
+    public function role(string $role): JsonResponse
     {
-        $role = auth()->user()->roles()->where('name', $role)->first();
-
-        return ['result' => $role ? true : false];
+        return response()->json(['result' => $this->authentication->roleExists(auth()->user(), $role)]);
     }
 
     /**
@@ -49,10 +63,10 @@ class UserController extends Controller
     /**
      * Remove the specified user from storage.
      *
-     * @param AuthController $user
+     * @param User $user
      * @return JsonResponse
      */
-    public function destroy(AuthController $user): JsonResponse
+    public function destroy(User $user): JsonResponse
     {
         return response()->json($user);
     }

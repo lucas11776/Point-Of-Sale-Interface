@@ -2,12 +2,28 @@
 
 namespace App\Http\Middleware;
 
+use App\Logic\AuthenticationLogic;
 use Closure;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class BlockIfUnauthenticated
 {
+    /**
+     * @var AuthenticationLogic
+     */
+    protected $authentication;
+
+    /**
+     * BlockIfUnauthenticated constructor.
+     *
+     * @param AuthenticationLogic $authentication
+     */
+    public function __construct(AuthenticationLogic $authentication)
+    {
+        $this->authentication = $authentication;
+    }
+
     /**
      * Handle an incoming request.
      *
@@ -17,22 +33,12 @@ class BlockIfUnauthenticated
      */
     public function handle($request, Closure $next)
     {
-        if (! $this->isLoggedIn()) {
+        if (! $this->authentication->loggedin()) {
             return response()->json(
                 ['messge' => 'Unauthorized Access.'], JsonResponse::HTTP_UNAUTHORIZED
             );
         }
 
         return $next($request);
-    }
-
-    /**
-     * Check if user is not logged in.
-     *
-     * @return bool
-     */
-    protected function isLoggedIn(): bool
-    {
-        return ! auth()->guest();
     }
 }

@@ -17,18 +17,9 @@ class CreateCustomerTest extends TestCase
     public function testCreateCustomerWithValidData()
     {
         auth()->login($this->getAdministrator());
+
         $this->createCustomer($this->generateCustomer())
             ->assertOk();
-    }
-
-    /**
-     * Try to create customer with valid data as normal user with no privallages.
-     */
-    public function testCreateCustomerWithValidDataAsUser()
-    {
-        auth()->login($this->getUser());
-        $this->createCustomer($this->generateCustomer())
-            ->assertUnauthorized();
     }
 
     /**
@@ -37,6 +28,7 @@ class CreateCustomerTest extends TestCase
     public function testCreateCustomerWithEmptyData()
     {
         auth()->login($this->getEmployee());
+
         $this->createCustomer([])
             ->assertStatus(JsonResponse::HTTP_UNPROCESSABLE_ENTITY)
             ->assertJsonValidationErrors(['first_name', 'last_name', 'email', 'cellphone_number']);

@@ -2,13 +2,18 @@
 
 namespace App\Logic;
 
-use App\Image;
 use App\User;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Hash;
 
-class AuthenticationLogic implements AuthenticationInterface
+class AuthenticationLogic extends UserLogic implements AuthenticationInterface
 {
+    /**
+     * @inheritDoc
+     */
+    public function loggedin(): bool
+    {
+        return auth()->check();
+    }
+
     /**
      * @inheritDoc
      */
@@ -20,7 +25,7 @@ class AuthenticationLogic implements AuthenticationInterface
     /**
      * @inheritDoc
      */
-    public function attemptLogin(array $credentials): User
+    public function attemptLogin(array $credentials)
     {
         return auth()->validate($credentials) ? User::where('email', $credentials['email'])->first() : null;
     }
@@ -30,7 +35,7 @@ class AuthenticationLogic implements AuthenticationInterface
      */
     public function roleExists(User $user, string $name): bool
     {
-        return $user->roles()->where('name', strtolower($name))->first() ? true : false;
+        return $this->isAdministrator($user) ? true : $this->hasRole($user, $name);
     }
 
     /**
@@ -42,29 +47,13 @@ class AuthenticationLogic implements AuthenticationInterface
     }
 
     /**
-     * Create new user account in storage.
+     * Check if user is administrator.
      *
-     * @param array $form
-     * @return User
+     * @param User $user
+     * @return bool
      */
-    protected function create(array $form): User {
-        $user = User::create([
-            'email' => $form['email'],
-            'last_name' => $form['last_name'],
-            'first_name' => $form['first_name'],
-            'password' => Hash::make($form['password']),
-        ]);
-
-        $this->createImage($user);
-
-        return $user;
-    }
-
-    private function createImage(User $user): Model
+    public function isAdministrator(User $user): bool
     {
-        return $user->image()->create([
-            'path' => '',
-            'url' => url(User::$defualtProfileImagePath)
-        ]);
+        return $this->hasRole($user, 'administrator');
     }
 }

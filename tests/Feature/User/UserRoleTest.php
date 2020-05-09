@@ -22,6 +22,17 @@ class UserRoleTest extends TestCase
     }
 
     /**
+     * Check administrator user result are true if request employee role.
+     */
+    public function testResultAreTrueIfUserIsAdministratorAndRequestEmployeeRole()
+    {
+        auth()->login($this->getAdministrator());
+
+        $this->userRole('employee')
+            ->assertJson(['result' => true]);
+    }
+
+    /**
      * Check if result are false if user request role that deos not belong to user.
      */
     public function testResultAreFalseIfUserRoleDoesNotExist()

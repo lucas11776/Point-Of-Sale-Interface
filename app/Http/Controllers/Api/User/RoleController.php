@@ -5,21 +5,26 @@ namespace App\Http\Controllers\Api\User;
 use App\User;
 use App\Role;
 use App\UsersRoles;
+use App\Logic\UserLogic;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\AddRoleRequest;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 
 class RoleController extends Controller
 {
     /**
-     * Get user roles.
-     *
-     * @return JsonResponse
+     * @var UserLogic
      */
-    public function index(): JsonResponse
+    protected $user;
+
+    /**
+     * RoleController constructor.
+     *
+     * @param UserLogic $user
+     */
+    public function __construct(UserLogic $user)
     {
-        return response()->json(auth()->user()->roles);
+        $this->user = $user;
     }
 
     /**
@@ -28,42 +33,26 @@ class RoleController extends Controller
      * @param AddRoleRequest $validator
      * @return JsonResponse
      */
-    public function add(int $userId, AddRoleRequest $validator): JsonResponse
+    public function add(User $user, AddRoleRequest $validator): JsonResponse
     {
-        if($this->hasRole($userId, $role = \request('role'))) {
-            return response()->json(
-                ['message' => 'User role has been added.'], JsonResponse::HTTP_BAD_REQUEST
-            );
+        if($this->user->hasRole($user, $role = $validator->get('role'))) {
+            return $this->roleErrorResponse();
         }
 
-        $this->addRolePivot($userId, $role);
+        $this->user->addRole($user, $role);
 
         return response()->json(['message' => 'User role has been added.']);
     }
 
     /**
-     * Check if user has role.
+     * User already has the role response error.
      *
-     * @param int $userId
-     * @param string $role
+     * @return JsonResponse
      */
-    protected function hasRole(int $userId, string $role): bool
+    protected function roleErrorResponse(): JsonResponse
     {
-        return User::where('id', $userId)
-            ->first()->roles()->where('name', $role)->first() ? true : false;
-    }
-
-    /**
-     * Add user role relationship (pivot).
-     *
-     * @param int $userId
-     * @param string $role
-     * @return UsersRoles
-     */
-    protected function addRolePivot(int $userId, string $role): UsersRoles
-    {
-        return User::where('id', $userId)->first()->addRole(
-            $role = Role::where('name', $role)->first()
+        return response()->json(
+            ['message' => 'User role has been added.'], JsonResponse::HTTP_BAD_REQUEST
         );
     }
 }

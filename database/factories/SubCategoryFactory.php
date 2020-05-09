@@ -10,7 +10,7 @@ use Illuminate\Support\Str;
 $factory->define(SubCategory::class, function (Faker $faker) {
     return [
         'category_id' => factory(Category::class)->create()->id,
-        'name' => $name = $faker->unique(true, 1000)->jobTitle,
+        'name' => $name = $faker->unique(true, 1000000)->jobTitle,
         'slug' => Str::slug($name)
     ];
 });

@@ -2,12 +2,28 @@
 
 namespace App\Http\Middleware;
 
+use App\Logic\AuthenticationLogic;
 use Closure;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
-class AllowIfEmployee extends AllowIfAdministrator
+class AllowIfEmployee
 {
+    /**
+     * @var AuthenticationLogic
+     */
+    protected $authentication;
+
+    /**
+     * AllowIfEmployee constructor.
+     *
+     * @param AuthenticationLogic $authentication
+     */
+    public function __construct(AuthenticationLogic $authentication)
+    {
+        $this->authentication = $authentication;
+    }
+
     /**
      * Handle an incoming request.
      *
@@ -17,7 +33,7 @@ class AllowIfEmployee extends AllowIfAdministrator
      */
     public function handle($request, Closure $next)
     {
-        if(! $this->isLoggedIn() || ! $this->isEmployee()) {
+        if(! $this->isEmployee()) {
             return response()->json(
                 ['Unauthorized Access.'], JsonResponse::HTTP_UNAUTHORIZED
             );
@@ -33,6 +49,6 @@ class AllowIfEmployee extends AllowIfAdministrator
      */
     protected function isEmployee(): bool
     {
-        return $this->isAdministrator() OR auth()->user()->roles('name', 'employee')->first();
+        return $this->authentication->loggedin() AND $this->authentication->roleExists(auth()->user(), 'employee');
     }
 }

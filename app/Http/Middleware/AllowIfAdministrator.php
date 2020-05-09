@@ -2,12 +2,28 @@
 
 namespace App\Http\Middleware;
 
+use App\Logic\AuthenticationLogic;
 use Closure;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
-class AllowIfAdministrator extends BlockIfUnauthenticated
+class AllowIfAdministrator
 {
+    /**
+     * @var AuthenticationLogic
+     */
+    protected $authentication;
+
+    /**
+     * AllowIfAdministrator constructor.
+     *
+     * @param AuthenticationLogic $authentication
+     */
+    public function __construct(AuthenticationLogic $authentication)
+    {
+        $this->authentication = $authentication;
+    }
+
     /**
      * Handle an incoming request.
      *s
@@ -17,9 +33,9 @@ class AllowIfAdministrator extends BlockIfUnauthenticated
      */
     public function handle($request, Closure $next)
     {
-        if(! $this->isLoggedIn() ||  ! $this->isAdministrator()) {
+        if(! $this->isAdministrator()) {
             return response()->json(
-                ['Unauthorized Access.'], JsonResponse::HTTP_UNAUTHORIZED
+                ['message' => 'Unauthorized Access'], JsonResponse::HTTP_UNAUTHORIZED
             );
         }
 
@@ -27,12 +43,12 @@ class AllowIfAdministrator extends BlockIfUnauthenticated
     }
 
     /**
-     * Check if user is administrator.
+     * Check if user is administrator and loggedin.
      *
      * @return bool
      */
-    public function isAdministrator(): bool
+    protected function isAdministrator(): bool
     {
-        return $this->isLoggedIn() AND auth()->user()->roles('name', 'administrator')->first();
+        return $this->authentication->loggedin() AND $this->authentication->isAdministrator(auth()->user());
     }
 }

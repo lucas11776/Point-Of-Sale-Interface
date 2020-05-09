@@ -10,7 +10,6 @@ use Illuminate\Foundation\Testing\TestResponse;
 
 class AddUserRoleTest extends TestCase
 {
-
     /**
      * Try to make a user to an administrator.
      */
